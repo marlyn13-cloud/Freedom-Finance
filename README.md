@@ -1,6 +1,6 @@
 # Freedom Finance 
 
-### Mina's Notes From Class
+### Notes From Class
 Created a branch that has everything that I think is importent to include in the database for the app
 
 ### Mike and Marlyn's Notes From Class
