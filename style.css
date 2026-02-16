@@ -1,0 +1,144 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    padding: 20px;
+
+    .header {
+        margin-bottom: 30px;
+    }
+
+    .main-title {
+        color: #088171; 
+        margin-bottom: 5px;
+    }
+
+    .new-budget-btn {
+        background-color: #a786e0;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        float: right;
+        margin-top: -60px; 
+    }
+
+
+    .summary-card {
+        display: inline-block;
+        width: 30%;
+        padding: 20px;
+        margin-right: 2%;
+        border-radius: 15px;
+        color: white;
+        vertical-align: top;
+        box-sizing: border-box; 
+    }
+
+    .purple { background-color: #8b5cf6; }
+    .pink { background-color: #e58f9d; }
+    .green { background-color: #4fd878; }
+
+    .big-number {
+        font-size: 40px;
+        font-weight: bold;
+        margin: 10px 0;
+    }
+
+    /* Small White Bar in the pink card */
+    .progress-bar-white {
+        background-color: rgba(255,255,255,0.3);
+        height: 5px;
+        border-radius: 5px;
+        margin-bottom: 5px;
+    }
+    .progress-bar-white .fill {
+        background-color: white;
+        height: 100%;
+    }
+
+    /* Bottom White Cards */
+    .section-title {
+        margin-top: 40px;
+        margin-bottom: 20px;
+    }
+
+    .budget-card {
+        background-color: white;
+        display: inline-block;
+        width: 30%;
+        padding: 20px;
+        margin-right: 2%;
+        margin-bottom: 20px;
+        border-radius: 15px;
+        border: 1px solid #e5e7eb;
+        vertical-align: top;
+        box-sizing: border-box;
+    }
+
+    .badge-green { 
+        background-color: #10b981; 
+        color: white; 
+        padding: 5px 10px; 
+        border-radius: 5px; 
+        font-size: 12px;
+    }
+    .badge-orange { 
+        background-color: #f59e0b; 
+        color: white; 
+        padding: 5px 10px; 
+        border-radius: 5px; 
+        font-size: 12px;
+    }
+    .badge-red { 
+        background-color: #ef4444; 
+        color: white; 
+        padding: 5px 10px; 
+        border-radius: 5px; 
+        font-size: 12px;
+    }
+
+    .category {
+        display: inline-block;
+        margin-left: 10px;
+    }
+
+    .money {
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .gray {
+        font-size: 14px;
+        color: gray;
+        font-weight: normal;
+    }
+
+    /* Progress bars for bottom cards */
+    .bar-container {
+        background-color: #eee;
+        height: 10px;
+        border-radius: 10px;
+        margin: 15px 0;
+    }
+
+    .bar-fill { height: 100%; border-radius: 10px; }
+    .blue { background-color: #3b82f6; }
+    .teal { background-color: #14b8a6; }
+    .orange { background-color: #f97316; }
+    .red { background-color: #ef4444; }
+    .purple { background-color: #a855f7; }
+    
+    .details {
+        font-size: 14px;
+        color: #3b82f6;
+    }
+    
+    .right {
+        float: right;
+        color: gray;
+    }
+    
+    .red-text { color: red; }
+}
