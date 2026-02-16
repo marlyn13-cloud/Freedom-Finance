@@ -13,3 +13,6 @@ From YNAB: Ensure the app is low maintenance with inputs from the user. We want 
 From Credit Karma: Lacks budgeting features but has simple UI.
 From Albert: Became cluttered with updates. Used to be a much more simple UI. The app is not always accurate when categorizing income and expenses.
 Started timeline and researched security procedures and testing procedures. Will update the timeline.
+
+###Marlyn Notes week of 2/16
+Designed UI for the Budget Tab
