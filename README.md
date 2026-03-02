@@ -16,3 +16,13 @@ Started timeline and researched security procedures and testing procedures. Will
 
 ### -Marlyn Notes week of 2/16
 Designed UI for the Budget Tab
+
+-------------------------------------------------------
+
+### MILESTONE 2 PLAN AND READINESS: 
+
+- USER LOGIN (MIKE)
+- FORGET PASSWORD/EMAIL/USERNAME (MARLYN & MIKE)
+- DATABASE FOR EACH LOGIN (MARLYN)
+- TRANSACTION TAB (JUAN)
+- LINK TO OTHER TABS AND DEBUG (JUAN)
