@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="header">
+        <div class="left-title">
+            <h1 class="main-title">Budget Dashboard</h1>
+        </div>
+        <div class="right-button">
+            <button class="new-budget-btn">+ New Budget</button>
+        </div>
+    </div>
+
+    <div>
+        <div class="summary-card purple">
+            <h2 class="card-title">Total Budget</h2>
+            <p class="big-number">$2,950</p>
+            <p class="small-text">Monthly allocation</p>
+        </div>
+
+        <div class="summary-card pink">
+            <h2 class="card-title">Total Spent</h2>
+            <p class="big-number">$2,220</p>
+            <div class="progress-bar-white">
+                <div class="fill" style="width: 75%;"></div>
+            </div>
+            <p class="small-text">75%</p>
+        </div>
+
+        <div class="summary-card green">
+            <h2 class="card-title">Remaining</h2>
+            <p class="big-number">$730</p>
+            <p class="small-text">Available to spend</p>
+        </div>
+    </div>
+
+    <div>
+        <h2 class="section-title">Your Budgets</h2>
+    </div>
+
+    <div>
+        <div class="budget-card">
+            <span class="badge-green">On Track</span>
+            <h3 class="category">Groceries</h3>
+            <p class="money">$520 <span class="gray">of $800</span></p>
+            <div class="bar-container">
+                <div class="bar-fill blue" style="width: 65%"></div>
+            </div>
+            <p class="details">65% used <span class="right">$280 left</span></p>
+        </div>
+
+        <div class="budget-card">
+            <span class="badge-orange">Almost There</span>
+            <h3 class="category">Transportation</h3>
+            <p class="money">$380 <span class="gray">of $400</span></p>
+            <div class="bar-container">
+                <div class="bar-fill teal" style="width: 95%"></div>
+            </div>
+            <p class="details">95% used <span class="right">$20 left</span></p>
+        </div>
+
+        <div class="budget-card">
+            <span class="badge-red">Over Budget</span>
+            <h3 class="category">Entertainment</h3>
+            <p class="money">$315 <span class="gray">of $300</span></p>
+            <div class="bar-container">
+                <div class="bar-fill orange" style="width: 100%"></div>
+            </div>
+            <p class="details">105% used <span class="right red-text">$15 over</span></p>
+        </div>
+    </div>
+
+    <div>
+        <div class="budget-card">
+            <span class="badge-green">On Track</span>
+            <h3 class="category">Dining Out</h3>
+            <p class="money">$245 <span class="gray">of $500</span></p>
+            <div class="bar-container">
+                <div class="bar-fill red" style="width: 49%"></div>
+            </div>
+            <p class="details">49% used <span class="right">$255 left</span></p>
+        </div>
+
+        <div class="budget-card">
+            <span class="badge-green">On Track</span>
+            <h3 class="category">Shopping</h3>
+            <p class="money">$420 <span class="gray">of $600</span></p>
+            <div class="bar-container">
+                <div class="bar-fill purple" style="width: 70%"></div>
+            </div>
+            <p class="details">70% used <span class="right">$180 left</span></p>
+        </div>
+
+        <div class="budget-card">
+            <span class="badge-orange">Almost There</span>
+            <h3 class="category">Utilities</h3>
+            <p class="money">$340 <span class="gray">of $350</span></p>
+            <div class="bar-container">
+                <div class="bar-fill pink" style="width: 97%"></div>
+            </div>
+            <p class="details">97% used <span class="right">$10 left</span></p>
+        </div>
+    </div>
+
+</body>
+</html>
