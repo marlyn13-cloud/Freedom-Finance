@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Freedom Finance — Transactions</title>
+  <link rel="stylesheet" href="transactions.css" />
+</head>
+<body>
+  <div class="shell">
+    <!-- Sidebar (dummy) -->
+    <aside class="sidebar">
+      <div class="brandRow">
+        <div class="logo">FF</div>
+        <div>
+          <div class="brandTitle">Freedom Finance</div>
+          <div class="brandSub">Milestone 1</div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <div class="navItem">Dashboard</div>
+        <div class="navItem active">Transactions</div>
+        <div class="navItem">Budget</div>
+      </nav>
+
+      <div class="sidebarFooter">Logout</div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+      <header class="header">
+        <div>
+          <h1>Transactions</h1>
+          <p class="muted">Add / edit / delete transactions + categories</p>
+        </div>
+      </header>
+
+      <!-- KPI cards -->
+      <section class="kpis">
+        <div class="kpi">
+          <div class="kpiLabel">Income</div>
+          <div id="kpiIncome" class="kpiValue good">$0.00</div>
+        </div>
+        <div class="kpi">
+          <div class="kpiLabel">Expenses</div>
+          <div id="kpiExpense" class="kpiValue bad">$0.00</div>
+        </div>
+        <div class="kpi">
+          <div class="kpiLabel">Net</div>
+          <div id="kpiNet" class="kpiValue">$0.00</div>
+        </div>
+      </section>
+
+      <section class="grid">
+        <!-- Left: Transactions list -->
+        <div class="card">
+          <div class="rowBetween">
+            <div>
+              <h3>Transactions</h3>
+              <div class="muted">Search + filter</div>
+            </div>
+
+            <div class="filters">
+              <input id="searchInput" class="input" placeholder="Search title..." />
+              <select id="filterCat" class="input">
+                <option value="All">All</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="txList" class="list"></div>
+          <div id="txEmpty" class="muted" style="display:none; margin-top:10px;">No transactions found.</div>
+        </div>
+
+        <!-- Right: Forms -->
+        <div class="rightCol">
+          <!-- Add/Edit Transaction -->
+          <div class="card">
+            <div class="rowBetween">
+              <h3 id="txFormTitle">Add Transaction</h3>
+              <button id="cancelEditBtn" class="btnGray" style="display:none;" type="button">Cancel</button>
+            </div>
+
+            <div id="txError" class="error" style="display:none;"></div>
+
+            <form id="txForm" class="form">
+              <input id="titleInput" class="input" placeholder="Title" />
+
+              <div class="twoCol">
+                <select id="typeInput" class="input">
+                  <option value="expense">expense</option>
+                  <option value="income">income</option>
+                </select>
+
+                <input id="amountInput" class="input" placeholder="Amount" />
+              </div>
+
+              <div class="twoCol">
+                <input id="dateInput" class="input" type="date" />
+                <select id="categoryInput" class="input"></select>
+              </div>
+
+              <button class="btnGreen" type="submit" id="submitTxBtn">Add</button>
+            </form>
+          </div>
+
+          <!-- Categories -->
+          <div class="card">
+            <h3>Categories</h3>
+
+            <div class="twoCol">
+              <input id="newCatInput" class="input" placeholder="New category" />
+              <button id="addCatBtn" class="btnGray" type="button">Add</button>
+            </div>
+
+            <div id="catList" class="list" style="margin-top:12px;"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="Transactions.js"></script>
+</body>
+</html>
