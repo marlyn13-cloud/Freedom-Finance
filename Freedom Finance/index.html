@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Freedom Finance</title>
+
+  <!-- =========================
+       EXTERNAL CSS FILE
+  ========================== -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <!-- =========================
+       TOP NAVBAR
+  ========================== -->
+  <div class="navbar">
+    <div class="nav-left">
+      <div class="logo">Freedom Finance</div>
+      <div class="nav-links">
+        <button id="tab-dashboard" class="active" onclick="showPage('dashboard')">Dashboard</button>
+        <button id="tab-transactions" onclick="showPage('transactions')">Transactions</button>
+        <button id="tab-budget" onclick="showPage('budget')">Budget</button>
+        <button id="tab-reports" onclick="showPage('reports')">Reports</button>
+      </div>
+    </div>
+
+    <div class="right-nav">
+      <button class="add-btn" onclick="openTxModalAdd()">+ Add Transaction</button>
+      <input class="search" placeholder="Search..." oninput="setSearch(this.value)" />
+    </div>
+  </div>
+
+  <!-- =========================
+       DASHBOARD PAGE
+  ========================== -->
+  <section id="page-dashboard" class="page active">
+    <div class="dash-grid">
+      <div>
+        <div class="card summary-card">
+          <div class="summary-title">Total Balance</div>
+          <div class="summary-value" id="sum-balance">$0.00</div>
+        </div>
+
+        <div class="card summary-card">
+          <div class="summary-title">Income</div>
+          <div class="summary-value" id="sum-income">$0.00</div>
+        </div>
+
+        <div class="card summary-card">
+          <div class="summary-title">Expenses</div>
+          <div class="summary-value" id="sum-expenses">$0.00</div>
+        </div>
+
+        <div class="card summary-card">
+          <div class="summary-title">Savings</div>
+          <div class="summary-value" id="sum-savings">$0.00</div>
+        </div>
+      </div>
+
+      <div class="dash-main">
+        <div class="card card-pad">
+          <div class="row-head">
+            <div>
+              <h3>Top 5 Spending Categories</h3>
+              <div style="color:var(--muted); font-size:13px; margin-top:4px;">Based on expenses by category</div>
+            </div>
+            <span class="link-green" onclick="showPage('budget')">Budget</span>
+          </div>
+          <div class="chart-wrap" id="chartWrap"></div>
+        </div>
+
+        <div class="card card-pad">
+          <div class="row-head">
+            <h3>Recent Transactions</h3>
+            <span class="link-green" onclick="showPage('transactions')">View All</span>
+          </div>
+          <div class="tx-list" id="recentList"></div>
+          <div class="hint">Add salary/expenses/savings</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================
+       TRANSACTIONS PAGE
+  ========================== -->
+  <section id="page-transactions" class="page">
+    <div class="card card-pad">
+      <div class="row-head">
+        <h2 style="margin:0;">Transactions</h2>
+        <span class="link-green" onclick="openTxModalAdd()">+ Add</span>
+      </div>
+      <div class="hint">Edit/delete entries. Search filters by description/category/type.</div>
+      <div class="tx-list" id="allList"></div>
+    </div>
+  </section>
+
+  <!-- =========================
+       BUDGET PAGE
+  ========================== -->
+  <section id="page-budget" class="page">
+    <div class="budget-header">
+      <h1 class="budget-title">Budget Dashboard</h1>
+      <button class="new-budget-btn" onclick="openBudgetModalAdd()">+ New Budget</button>
+    </div>
+
+    <div class="budget-summary-row">
+      <div class="budget-summary purple">
+        <h2 class="card-title">Total Budget</h2>
+        <p class="big-number" id="bud-total">$0</p>
+        <p class="small-text">Monthly allocation</p>
+      </div>
+
+      <div class="budget-summary pink">
+        <h2 class="card-title">Total Spent</h2>
+        <p class="big-number" id="bud-spent">$0</p>
+        <div class="progress-bar-white">
+          <div class="fill" id="bud-fill" style="width:0%"></div>
+        </div>
+        <p class="small-text" id="bud-pct">0%</p>
+      </div>
+
+      <div class="budget-summary green">
+        <h2 class="card-title">Remaining</h2>
+        <p class="big-number" id="bud-remain">$0</p>
+        <p class="small-text">Available to spend</p>
+      </div>
+    </div>
+
+    <h2 class="section-title">Your Budgets</h2>
+    <div class="budget-grid" id="budgetGrid"></div>
+
+    <div class="hint">
+      Budgets are editable. Spent amounts are calculated from your transactions (Expense type) by category.
+    </div>
+  </section>
+
+  <!-- =========================
+       REPORTS PAGE
+  ========================== -->
+  <section id="page-reports" class="page">
+    <div class="card card-pad">
+      <h2 style="margin:0;">Reports</h2>
+      <p style="color:var(--muted); margin:8px 0 0;">Later: exports, monthly summaries, charts.</p>
+    </div>
+  </section>
+
+  <!-- =========================
+       TRANSACTION MODAL
+  ========================== -->
+  <div class="modal" id="txModal" onclick="backdropClose(event, 'txModal')">
+    <div class="modal-content" role="dialog" aria-modal="true">
+      <div class="modal-top">
+        <h3 id="txModalTitle">Add Transaction</h3>
+        <button class="close-x" onclick="closeModal('txModal')" aria-label="Close">✕</button>
+      </div>
+
+      <div class="grid2">
+        <div>
+          <label>Type</label>
+          <select id="txType">
+            <option value="income">Income (Paycheck)</option>
+            <option value="expense" selected>Expense</option>
+            <option value="savings">Savings</option>
+            <option value="investment">Investment</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Date</label>
+          <input id="txDate" type="date" />
+        </div>
+      </div>
+
+      <label>Description</label>
+      <input id="txDesc" placeholder="e.g., Paycheck, Groceries, Roth IRA" />
+
+      <div class="grid2">
+        <div>
+          <label>Amount (positive)</label>
+          <input id="txAmount" type="number" step="0.01" placeholder="e.g., 156.50" />
+        </div>
+
+        <div>
+          <label>Category</label>
+          <select id="txCategory" onchange="onTxCategoryChange()"></select>
+          <input id="txNewCategory" class="hidden" placeholder="New category name..." />
+        </div>
+      </div>
+
+      <div class="error" id="txError"></div>
+
+      <div class="actions">
+        <button class="btn secondary" onclick="closeModal('txModal')">Cancel</button>
+        <button class="btn primary" id="txSaveBtn" onclick="saveTransaction()">Save</button>
+      </div>
+
+      <div class="hint">Expenses store internally as negative. Everything stays synced across Dashboard + Budget.</div>
+    </div>
+  </div>
+
+  <!-- =========================
+       BUDGET MODAL
+  ========================== -->
+  <div class="modal" id="budgetModal" onclick="backdropClose(event, 'budgetModal')">
+    <div class="modal-content" role="dialog" aria-modal="true">
+      <div class="modal-top">
+        <h3 id="budgetModalTitle">New Budget</h3>
+        <button class="close-x" onclick="closeModal('budgetModal')" aria-label="Close">✕</button>
+      </div>
+
+      <label>Category</label>
+      <input id="budCategory" placeholder="e.g., Food" />
+
+      <label>Monthly Limit (USD)</label>
+      <input id="budLimit" type="number" step="0.01" placeholder="e.g., 200" />
+
+      <div class="error" id="budError"></div>
+
+      <div class="actions">
+        <button class="btn secondary" onclick="closeModal('budgetModal')">Cancel</button>
+        <button class="btn primary" id="budSaveBtn" onclick="saveBudget()">Save</button>
+      </div>
+
+      <div class="hint">Spent is calculated from your transactions by category (Expense only).</div>
+    </div>
+  </div>
+
+  <!-- =========================
+       EXTERNAL JAVASCRIPT FILE
+  ========================== -->
+  <script src="script.js"></script>
+</body>
+</html>
