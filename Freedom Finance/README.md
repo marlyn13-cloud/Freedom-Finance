@@ -89,10 +89,10 @@ https://yourusername.github.io/freedom-finance/
 
 ## Future Enhancements
 
-- Backend integration for persistent storage (e.g., Firebase, MongoDB)  
-- User authentication system  
+- Backend integration for persistent storage
+- User authentication system and login page
 - Export functionality (CSV/PDF reports)  
-- Mobile responsiveness improvements  
+- AI assistant bot 
 - Advanced analytics and reporting features  
 
 ---
