@@ -4,27 +4,17 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Freedom Finance</title>
+
+  <!-- =========================
+       EXTERNAL CSS FILE
+  ========================== -->
   <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-  <div class="navbar" id="main-nav" style="display: none;">
-    <div class="nav-left">
-      <div class="logo">Freedom Finance</div>
-      <div class="nav-links">
-        <button id="tab-dashboard" onclick="showPage('dashboard')">Dashboard</button>
-        <button id="tab-transactions" onclick="showPage('transactions')">Transactions</button>
-        <button id="tab-budget" onclick="showPage('budget')">Budget</button>
-        <button id="tab-reports" onclick="showPage('reports')">Reports</button>
-      </div>
-    </div>
-
-    <div class="right-nav">
-      <button class="add-btn" onclick="openTxModalAdd()">+ Add Transaction</button>
-      <input class="search" placeholder="Search..." oninput="setSearch(this.value)" />
-    </div>
-  </div>
-
+   <!-- =========================
+       Log in page
+  ========================== -->
   <section id="page-login" class="page active login-wrapper">
     <div class="login-card">
       <h1 class="login-title">Welcome Back</h1>
@@ -68,8 +58,30 @@
       </form>
     </div>
   </section>
+  <!-- =========================
+       TOP NAVBAR
+  ========================== -->
+  <div class="navbar">
+    <div class="nav-left">
+      <div class="logo">Freedom Finance</div>
+      <div class="nav-links">
+        <button id="tab-dashboard" class="active" onclick="showPage('dashboard')">Dashboard</button>
+        <button id="tab-transactions" onclick="showPage('transactions')">Transactions</button>
+        <button id="tab-budget" onclick="showPage('budget')">Budget</button>
+        <button id="tab-reports" onclick="showPage('reports')">Reports</button>
+      </div>
+    </div>
 
-  <section id="page-dashboard" class="page">
+    <div class="right-nav">
+      <button class="add-btn" onclick="openTxModalAdd()">+ Add Transaction</button>
+      <input class="search" placeholder="Search..." oninput="setSearch(this.value)" />
+    </div>
+  </div>
+
+  <!-- =========================
+       DASHBOARD PAGE
+  ========================== -->
+  <section id="page-dashboard" class="page active">
     <div class="dash-grid">
       <div>
         <div class="card summary-card">
@@ -117,6 +129,9 @@
     </div>
   </section>
 
+  <!-- =========================
+       TRANSACTIONS PAGE
+  ========================== -->
   <section id="page-transactions" class="page">
     <div class="card card-pad">
       <div class="row-head">
@@ -128,6 +143,9 @@
     </div>
   </section>
 
+  <!-- =========================
+       BUDGET PAGE
+  ========================== -->
   <section id="page-budget" class="page">
     <div class="budget-header">
       <h1 class="budget-title">Budget Dashboard</h1>
@@ -165,6 +183,9 @@
     </div>
   </section>
 
+  <!-- =========================
+       REPORTS PAGE
+  ========================== -->
   <section id="page-reports" class="page">
     <div class="card card-pad">
       <h2 style="margin:0;">Reports</h2>
@@ -172,6 +193,9 @@
     </div>
   </section>
 
+  <!-- =========================
+       TRANSACTION MODAL
+  ========================== -->
   <div class="modal" id="txModal" onclick="backdropClose(event, 'txModal')">
     <div class="modal-content" role="dialog" aria-modal="true">
       <div class="modal-top">
@@ -223,6 +247,9 @@
     </div>
   </div>
 
+  <!-- =========================
+       BUDGET MODAL
+  ========================== -->
   <div class="modal" id="budgetModal" onclick="backdropClose(event, 'budgetModal')">
     <div class="modal-content" role="dialog" aria-modal="true">
       <div class="modal-top">
@@ -247,6 +274,9 @@
     </div>
   </div>
 
+  <!-- =========================
+       EXTERNAL JAVASCRIPT FILE
+  ========================== -->
   <script src="script.js"></script>
 </body>
 </html>
