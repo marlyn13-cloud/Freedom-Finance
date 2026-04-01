@@ -53,12 +53,12 @@ function showPage(name){
 }
 
 function handleLogin(e) {
-  e.preventDefault(); // Prevent page refresh
+  e.preventDefault(); // Prevents the form from refreshing the page
   
-  // Show the main navigation bar
+  // Shows the main navigation bar now that it has the correct ID
   document.getElementById('main-nav').style.display = 'flex';
   
-  // Transition to Dashboard
+  // Transitions to Dashboard
   showPage('dashboard');
 }
 
