@@ -36,15 +36,30 @@ function escapeHtml(str){
 }
 
 /* =========================
-   PAGE NAVIGATION
+   PAGE NAVIGATION & LOGIN
 ========================= */
 function showPage(name){
-  const pages = ["dashboard","transactions","budget","reports"];
+  const pages = ["login", "dashboard", "transactions", "budget", "reports"];
+  
   for(const p of pages){
-    document.getElementById("page-" + p).classList.toggle("active", p === name);
-    document.getElementById("tab-" + p).classList.toggle("active", p === name);
+    const pageEl = document.getElementById("page-" + p);
+    if(pageEl) pageEl.classList.toggle("active", p === name);
+    
+    const tabEl = document.getElementById("tab-" + p);
+    if(tabEl) tabEl.classList.toggle("active", p === name);
   }
+  
   window.scrollTo({ top:0, behavior:"instant" });
+}
+
+function handleLogin(e) {
+  e.preventDefault(); // Prevent page refresh
+  
+  // Show the main navigation bar
+  document.getElementById('main-nav').style.display = 'flex';
+  
+  // Transition to Dashboard
+  showPage('dashboard');
 }
 
 function setSearch(v){
