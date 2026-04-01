@@ -29,7 +29,130 @@ body{
   background:var(--bg);
   color:var(--ink);
 }
+/* ====================
+Log in page
+====================*/
+/* =========================
+   LOGIN PAGE STYLES
+========================= */
+.login-wrapper {
+  background: #eef1f6;
+  min-height: 100vh;
+  padding: 20px;
+}
 
+#page-login.active {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 40px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.login-title {
+  text-align: center;
+  margin: 0 0 8px;
+  font-size: 28px;
+  color: #111;
+}
+
+.login-subtitle {
+  text-align: center;
+  color: #6b7280;
+  margin: 0 0 30px;
+  font-size: 15px;
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #374151;
+  font-size: 14px;
+}
+
+.input-with-icon {
+  position: relative;
+}
+
+.input-with-icon input {
+  width: 100%;
+  padding: 12px 12px 12px 42px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.input-with-icon input:focus {
+  border-color: #5a4fcf;
+}
+
+.input-with-icon svg {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+  width: 18px;
+  height: 18px;
+}
+
+.icon-left {
+  left: 14px;
+}
+
+.icon-right {
+  right: 14px;
+  cursor: pointer;
+}
+
+.forgot-pwd {
+  text-align: right;
+  margin-bottom: 24px;
+}
+
+.forgot-pwd a, .signup-link a {
+  color: #5a4fcf;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.login-btn {
+  width: 100%;
+  background: #5a4fcf;
+  color: #fff;
+  border: none;
+  padding: 14px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.login-btn:hover {
+  opacity: 0.9;
+}
+
+.signup-link {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 14px;
+  color: #6b7280;
+}
 /* =========================
    NAVIGATION
 ========================= */
