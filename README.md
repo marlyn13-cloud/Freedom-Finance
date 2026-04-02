@@ -6,6 +6,7 @@
 - IMPLEMENTATION OF TRANSACTION TAB (JUAN)
 - LINK TO OTHER TABS AND DEBUG (MARLYN)
 
+https://supabase.com/
 
 https://marlyn13-cloud.github.io/Freedom-Finance/
 
