@@ -8,6 +8,15 @@
 
 https://supabase.com/
 
+marlyn To do list:
+
+AFTER MIKE ADDS FUNCTIONALITIES OF USER LOGIN PAGE:
+
+-merge sql database to supabase and set up github action so supabase never pauses.
+
+- make ai chatbot (Finn.ai)
+
+
 https://marlyn13-cloud.github.io/Freedom-Finance/
 
 -------------------------------------------------------
