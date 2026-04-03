@@ -53,12 +53,8 @@ function showPage(name){
 }
 
 function handleLogin(e) {
-  e.preventDefault(); // Prevents the form from refreshing the page
-  
-  // Shows the main navigation bar now that it has the correct ID
+  e.preventDefault(); 
   document.getElementById('main-nav').style.display = 'flex';
-  
-  // Transitions to Dashboard
   showPage('dashboard');
 }
 
@@ -110,7 +106,6 @@ function loadBudgets(){
     if(Array.isArray(b) && b.length) return b;
   }catch{}
 
-  /* Placeholder budgets */
   const seed = [
     {id: uid(), category:"Food", limit:200},
     {id: uid(), category:"Entertainment", limit:100},
