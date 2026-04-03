@@ -29,9 +29,7 @@ body{
   background:var(--bg);
   color:var(--ink);
 }
-/* ====================
-Log in page
-====================*/
+
 /* =========================
    LOGIN PAGE STYLES
 ========================= */
@@ -153,6 +151,7 @@ Log in page
   font-size: 14px;
   color: var(--muted);
 }
+
 /* =========================
    NAVIGATION
 ========================= */
