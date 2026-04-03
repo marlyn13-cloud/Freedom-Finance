@@ -2,20 +2,20 @@
    ROOT VARIABLES
 ========================= */
 :root{
-  --bg:#eef3e4;
-  --nav:#0a0a0a;
-  --green:#00c853;
-  --card:#fff;
-  --border:#e5e7eb;
-  --muted:#6b7280;
+  --bg:#F1F5F9;
+  --nav:#334155;
+  --green:#166534;
+  --card:#FFFFFF;
+  --border:#CBD5E1;
+  --muted:#475569;
   --shadow:0 10px 24px rgba(0,0,0,.06);
   --radius:15px;
-  --ink:#111;
-  --warn:#f59e0b;
-  --bad:#ef4444;
-  --purple:#8b5cf6;
-  --pink:#e58f9d;
-  --good:#10b981;
+  --ink:#0F172A;
+  --warn:#B45309;
+  --bad:#991B1B;
+  --purple:#475569;
+  --pink:#64748B;
+  --good:#166534;
 }
 
 /* =========================
@@ -36,7 +36,7 @@ Log in page
    LOGIN PAGE STYLES
 ========================= */
 .login-wrapper {
-  background: #eef1f6;
+  background: var(--bg);
   min-height: 100vh;
   padding: 20px;
 }
@@ -48,7 +48,7 @@ Log in page
 }
 
 .login-card {
-  background: #fff;
+  background: var(--card);
   border-radius: 12px;
   padding: 40px;
   width: 100%;
@@ -60,12 +60,12 @@ Log in page
   text-align: center;
   margin: 0 0 8px;
   font-size: 28px;
-  color: #111;
+  color: var(--ink);
 }
 
 .login-subtitle {
   text-align: center;
-  color: #6b7280;
+  color: var(--muted);
   margin: 0 0 30px;
   font-size: 15px;
 }
@@ -78,7 +78,7 @@ Log in page
   display: block;
   font-weight: 600;
   margin-bottom: 8px;
-  color: #374151;
+  color: #334155;
   font-size: 14px;
 }
 
@@ -89,7 +89,7 @@ Log in page
 .input-with-icon input {
   width: 100%;
   padding: 12px 12px 12px 42px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border);
   border-radius: 8px;
   font-size: 15px;
   outline: none;
@@ -97,14 +97,14 @@ Log in page
 }
 
 .input-with-icon input:focus {
-  border-color: #5a4fcf;
+  border-color: #334155;
 }
 
 .input-with-icon svg {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  color: #9ca3af;
+  color: var(--muted);
   width: 18px;
   height: 18px;
 }
@@ -124,7 +124,7 @@ Log in page
 }
 
 .forgot-pwd a, .signup-link a {
-  color: #5a4fcf;
+  color: #334155;
   text-decoration: none;
   font-weight: 600;
   font-size: 14px;
@@ -132,7 +132,7 @@ Log in page
 
 .login-btn {
   width: 100%;
-  background: #5a4fcf;
+  background: #334155;
   color: #fff;
   border: none;
   padding: 14px;
@@ -151,7 +151,7 @@ Log in page
   text-align: center;
   margin-top: 24px;
   font-size: 14px;
-  color: #6b7280;
+  color: var(--muted);
 }
 /* =========================
    NAVIGATION
@@ -192,7 +192,7 @@ Log in page
 .nav-links button{
   background:transparent;
   border:none;
-  color:#cfcfcf;
+  color:#94A3B8;
   cursor:pointer;
   font-size:16px;
   padding:6px 0;
@@ -221,7 +221,7 @@ Log in page
 }
 
 .search{
-  background:#1e2a3a;
+  background:#1E293B;
   border:none;
   padding:10px 12px;
   border-radius:10px;
@@ -372,7 +372,7 @@ Log in page
   font-size:14px;
   font-weight:bold;
   padding-bottom:8px;
-  border-bottom:1px solid #f1f5f9;
+  border-bottom:1px solid var(--border);
 }
 
 .legend-item:last-child{
@@ -418,7 +418,7 @@ Log in page
   align-items:center;
   gap:12px;
   padding:12px 0;
-  border-bottom:1px solid #eef2f7;
+  border-bottom:1px solid var(--border);
 }
 
 .tx-left{
@@ -446,8 +446,8 @@ Log in page
   padding:4px 10px;
   border-radius:999px;
   font-size:12px;
-  background:#eef2f7;
-  color:#334155;
+  background:#E2E8F0;
+  color:var(--ink);
 }
 
 .tx-right{
@@ -473,7 +473,7 @@ Log in page
 
 .icon-btn{
   border:1px solid var(--border);
-  background:#fff;
+  background:var(--card);
   border-radius:10px;
   padding:8px 10px;
   cursor:pointer;
@@ -481,16 +481,16 @@ Log in page
 }
 
 .icon-btn:hover{
-  background:#f8fafc;
+  background:var(--bg);
 }
 
 .danger{
-  color:#b91c1c;
-  border-color:#fecaca;
+  color:var(--bad);
+  border-color:#FCA5A5;
 }
 
 .danger:hover{
-  background:#fff5f5;
+  background:#FEF2F2;
 }
 
 /* =========================
@@ -506,12 +506,12 @@ Log in page
 
 .budget-title{
   margin:0;
-  color:#088171;
+  color:#334155;
   font-size:28px;
 }
 
 .new-budget-btn{
-  background:#a786e0;
+  background:#334155;
   color:#fff;
   padding:10px 18px;
   border:none;
@@ -544,7 +544,7 @@ Log in page
 
 .budget-summary.purple{background:var(--purple);}
 .budget-summary.pink{background:var(--pink);}
-.budget-summary.green{background:#4fd878;}
+.budget-summary.green{background:var(--good);}
 
 .budget-summary .card-title{
   margin:0;
@@ -597,7 +597,7 @@ Log in page
 }
 
 .budget-card{
-  background:#fff;
+  background:var(--card);
   border:1px solid var(--border);
   border-radius:16px;
   padding:20px;
@@ -632,12 +632,12 @@ Log in page
 
 .money .gray{
   font-size:14px;
-  color:gray;
+  color:var(--muted);
   font-weight:normal;
 }
 
 .bar-container{
-  background:#eee;
+  background:#E2E8F0;
   height:10px;
   border-radius:999px;
   margin:14px 0 10px;
@@ -648,22 +648,22 @@ Log in page
   height:100%;
   border-radius:999px;
   width:0%;
-  background:#3b82f6;
+  background:#334155;
 }
 
 .details{
   margin:0;
   font-size:14px;
-  color:#3b82f6;
+  color:#334155;
 }
 
 .right{
   float:right;
-  color:gray;
+  color:var(--muted);
 }
 
 .red-text{
-  color:red;
+  color:var(--bad);
   font-weight:bold;
 }
 
@@ -677,7 +677,7 @@ Log in page
 
 .mini-btn{
   border:1px solid var(--border);
-  background:#fff;
+  background:var(--card);
   border-radius:10px;
   padding:6px 8px;
   cursor:pointer;
@@ -686,7 +686,7 @@ Log in page
 }
 
 .mini-btn:hover{
-  background:#f8fafc;
+  background:var(--bg);
 }
 
 /* =========================
@@ -704,7 +704,7 @@ Log in page
 }
 
 .modal-content{
-  background:#fff;
+  background:var(--card);
   padding:18px;
   border-radius:14px;
   width:min(460px,100%);
@@ -726,7 +726,7 @@ Log in page
 
 .close-x{
   border:1px solid var(--border);
-  background:#fff;
+  background:var(--card);
   border-radius:10px;
   padding:6px 10px;
   cursor:pointer;
@@ -734,7 +734,7 @@ Log in page
 }
 
 .close-x:hover{
-  background:#f8fafc;
+  background:var(--bg);
 }
 
 .modal label{
@@ -779,8 +779,8 @@ Log in page
 }
 
 .btn.secondary{
-  background:#eef2f7;
-  color:#111;
+  background:#E2E8F0;
+  color:var(--ink);
   border:1px solid var(--border);
 }
 
@@ -792,9 +792,9 @@ Log in page
 .error{
   display:none;
   margin-top:10px;
-  background:#fff1f2;
-  color:#9f1239;
-  border:1px solid #fecdd3;
+  background:#FEF2F2;
+  color:var(--bad);
+  border:1px solid #FCA5A5;
   padding:10px;
   border-radius:10px;
   font-size:13px;
