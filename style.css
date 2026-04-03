@@ -4,7 +4,7 @@
 :root{
   --bg:#F1F5F9;
   --nav:#334155;
-  --green:#166534;
+  --green:#0F766E;
   --card:#FFFFFF;
   --border:#CBD5E1;
   --muted:#475569;
@@ -15,7 +15,7 @@
   --bad:#991B1B;
   --purple:#475569;
   --pink:#64748B;
-  --good:#166534;
+  --good:#0F766E;
 }
 
 /* =========================
