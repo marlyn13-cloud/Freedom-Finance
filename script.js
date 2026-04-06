@@ -1,9 +1,11 @@
 /* =========================
    STORAGE KEYS
 ========================= */
-const TX_KEY  = "ff_transactions_v1";
+const TX_KEY = "ff_transactions_v1";
 const BUD_KEY = "ff_budgets_v1";
 const CAT_KEY = "ff_categories_v1";
+const USER_KEY = "ff_users_v1";
+const SESSION_KEY = "ff_current_user_v1";
 
 /* =========================
    APP STATE
@@ -15,50 +17,233 @@ let editingBudId = null;
 /* =========================
    HELPERS
 ========================= */
-function uid(){
+function uid() {
   return Math.random().toString(16).slice(2) + Date.now().toString(16);
 }
 
-function money(n){
-  return n.toLocaleString(undefined, {
-    style:"currency",
-    currency:"USD"
+function money(n) {
+  return Number(n).toLocaleString(undefined, {
+    style: "currency",
+    currency: "USD"
   });
 }
 
-function escapeHtml(str){
+function escapeHtml(str) {
   return String(str)
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function isValidEmail(email) {
+  return /\S+@\S+\.\S+/.test(email);
 }
 
 /* =========================
-   PAGE NAVIGATION & LOGIN
+   AUTH STORAGE
 ========================= */
-function showPage(name){
-  const pages = ["login", "dashboard", "transactions", "budget", "reports"];
-  
-  for(const p of pages){
-    const pageEl = document.getElementById("page-" + p);
-    if(pageEl) pageEl.classList.toggle("active", p === name);
-    
-    const tabEl = document.getElementById("tab-" + p);
-    if(tabEl) tabEl.classList.toggle("active", p === name);
+function loadUsers() {
+  try {
+    return JSON.parse(localStorage.getItem(USER_KEY)) || [];
+  } catch {
+    return [];
   }
-  
-  window.scrollTo({ top:0, behavior:"instant" });
 }
 
-function handleLogin(e) {
-  e.preventDefault(); 
-  document.getElementById('main-nav').style.display = 'flex';
-  showPage('dashboard');
+function saveUsers(users) {
+  localStorage.setItem(USER_KEY, JSON.stringify(users));
 }
 
-function setSearch(v){
+function setCurrentUser(user) {
+  localStorage.setItem(SESSION_KEY, JSON.stringify(user));
+}
+
+function getCurrentUser() {
+  try {
+    return JSON.parse(localStorage.getItem(SESSION_KEY));
+  } catch {
+    return null;
+  }
+}
+
+function clearCurrentUser() {
+  localStorage.removeItem(SESSION_KEY);
+}
+
+/* =========================
+   AUTH UI HELPERS
+========================= */
+function clearAuthMessages() {
+  const errorIds = ["loginError", "signupError", "forgotError"];
+  const successIds = ["forgotSuccess"];
+
+  errorIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.style.display = "none";
+      el.textContent = "";
+    }
+  });
+
+  successIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.style.display = "none";
+      el.textContent = "";
+    }
+  });
+}
+
+function showError(id, msg) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.display = "block";
+  el.textContent = msg;
+}
+
+function showSuccess(id, msg) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.display = "block";
+  el.textContent = msg;
+}
+
+function showAuthView(name) {
+  clearAuthMessages();
+
+  const views = ["login", "signup", "forgot"];
+  for (const view of views) {
+    const el = document.getElementById(`view-${view}`);
+    if (el) el.classList.toggle("active", view === name);
+  }
+}
+
+/* =========================
+   AUTH ACTIONS
+========================= */
+function handleSignup() {
+  clearAuthMessages();
+
+  const username = (document.getElementById("signupUsername").value || "").trim();
+  const email = (document.getElementById("signupEmail").value || "").trim().toLowerCase();
+  const password = document.getElementById("signupPassword").value || "";
+  const confirmPassword = document.getElementById("signupConfirmPassword").value || "";
+
+  if (!username) return showError("signupError", "Enter a username.");
+  if (!email) return showError("signupError", "Enter an email.");
+  if (!isValidEmail(email)) return showError("signupError", "Enter a valid email.");
+  if (!password) return showError("signupError", "Enter a password.");
+  if (password.length < 6) return showError("signupError", "Password must be at least 6 characters.");
+  if (password !== confirmPassword) return showError("signupError", "Passwords do not match.");
+
+  const users = loadUsers();
+
+  const usernameExists = users.some(u => u.username.toLowerCase() === username.toLowerCase());
+  if (usernameExists) return showError("signupError", "That username already exists.");
+
+  const emailExists = users.some(u => u.email.toLowerCase() === email.toLowerCase());
+  if (emailExists) return showError("signupError", "That email is already registered.");
+
+  const newUser = {
+    id: uid(),
+    username,
+    email,
+    password
+  };
+
+  users.push(newUser);
+  saveUsers(users);
+
+  document.getElementById("loginIdentifier").value = email;
+  document.getElementById("loginPassword").value = "";
+  showAuthView("login");
+}
+
+function handleLogin() {
+  clearAuthMessages();
+
+  const identifier = (document.getElementById("loginIdentifier").value || "").trim().toLowerCase();
+  const password = document.getElementById("loginPassword").value || "";
+
+  if (!identifier) return showError("loginError", "Enter your username or email.");
+  if (!password) return showError("loginError", "Enter your password.");
+
+  const users = loadUsers();
+  const user = users.find(u =>
+    u.email.toLowerCase() === identifier || u.username.toLowerCase() === identifier
+  );
+
+  if (!user) return showError("loginError", "Account not found.");
+  if (user.password !== password) return showError("loginError", "Incorrect password.");
+
+  setCurrentUser({
+    id: user.id,
+    username: user.username,
+    email: user.email
+  });
+
+  openApp();
+}
+
+function handleForgotPassword() {
+  clearAuthMessages();
+
+  const email = (document.getElementById("forgotEmail").value || "").trim().toLowerCase();
+  const newPassword = document.getElementById("forgotNewPassword").value || "";
+
+  if (!email) return showError("forgotError", "Enter your email.");
+  if (!isValidEmail(email)) return showError("forgotError", "Enter a valid email.");
+  if (!newPassword) return showError("forgotError", "Enter a new password.");
+  if (newPassword.length < 6) return showError("forgotError", "Password must be at least 6 characters.");
+
+  const users = loadUsers();
+  const index = users.findIndex(u => u.email.toLowerCase() === email);
+
+  if (index === -1) return showError("forgotError", "No account found with that email.");
+
+  users[index].password = newPassword;
+  saveUsers(users);
+
+  showSuccess("forgotSuccess", "Password updated. You can sign in now.");
+}
+
+/* =========================
+   APP VISIBILITY
+========================= */
+function openApp() {
+  document.getElementById("authPage").classList.add("hidden");
+  document.getElementById("appShell").classList.remove("hidden");
+  showPage("dashboard");
+  renderAll();
+}
+
+function logoutUser() {
+  clearCurrentUser();
+  document.getElementById("appShell").classList.add("hidden");
+  document.getElementById("authPage").classList.remove("hidden");
+  showAuthView("login");
+}
+
+/* =========================
+   PAGE NAVIGATION
+========================= */
+function showPage(name) {
+  const pages = ["dashboard", "transactions", "budget", "reports"];
+
+  for (const p of pages) {
+    const page = document.getElementById("page-" + p);
+    const tab = document.getElementById("tab-" + p);
+
+    if (page) page.classList.toggle("active", p === name);
+    if (tab) tab.classList.toggle("active", p === name);
+  }
+
+  window.scrollTo({ top: 0, behavior: "instant" });
+}
+
+function setSearch(v) {
   searchTerm = (v || "").trim().toLowerCase();
   renderAll();
 }
@@ -66,20 +251,20 @@ function setSearch(v){
 /* =========================
    MODAL HELPERS
 ========================= */
-function openModal(id){
+function openModal(id) {
   document.getElementById(id).style.display = "flex";
 }
 
-function closeModal(id){
+function closeModal(id) {
   document.getElementById(id).style.display = "none";
 }
 
-function backdropClose(e, id){
-  if(e.target.id === id) closeModal(id);
+function backdropClose(e, id) {
+  if (e.target.id === id) closeModal(id);
 }
 
 document.addEventListener("keydown", (e) => {
-  if(e.key === "Escape"){
+  if (e.key === "Escape") {
     closeModal("txModal");
     closeModal("budgetModal");
   }
@@ -88,101 +273,95 @@ document.addEventListener("keydown", (e) => {
 /* =========================
    DATA LOAD / SAVE
 ========================= */
-function loadTx(){
-  try{
+function loadTx() {
+  try {
     return JSON.parse(localStorage.getItem(TX_KEY)) || [];
-  }catch{
+  } catch {
     return [];
   }
 }
 
-function saveTx(txs){
+function saveTx(txs) {
   localStorage.setItem(TX_KEY, JSON.stringify(txs));
 }
 
-function loadBudgets(){
-  try{
+function loadBudgets() {
+  try {
     const b = JSON.parse(localStorage.getItem(BUD_KEY));
-    if(Array.isArray(b) && b.length) return b;
-  }catch{}
+    if (Array.isArray(b)) return b;
+  } catch {}
 
-  const seed = [
-    {id: uid(), category:"Food", limit:200},
-    {id: uid(), category:"Entertainment", limit:100},
-    {id: uid(), category:"Transport", limit:150},
-    {id: uid(), category:"Utilities", limit:120},
-    {id: uid(), category:"Shopping", limit:180},
-    {id: uid(), category:"Dining Out", limit:160},
-  ];
-
-  localStorage.setItem(BUD_KEY, JSON.stringify(seed));
-  return seed;
+  const empty = [];
+  localStorage.setItem(BUD_KEY, JSON.stringify(empty));
+  return empty;
 }
 
-function saveBudgets(buds){
+function saveBudgets(buds) {
   localStorage.setItem(BUD_KEY, JSON.stringify(buds));
 }
 
-function loadCategories(){
-  try{
+function loadCategories() {
+  try {
     const c = JSON.parse(localStorage.getItem(CAT_KEY));
-    if(Array.isArray(c) && c.length) return c;
-  }catch{}
+    if (Array.isArray(c) && c.length) return c;
+  } catch {}
 
-  const defaults = ["Other","Salary"];
+  const defaults = ["Other", "Salary"];
   localStorage.setItem(CAT_KEY, JSON.stringify(defaults));
   return defaults;
 }
 
-function saveCategories(cats){
+function saveCategories(cats) {
   localStorage.setItem(CAT_KEY, JSON.stringify(cats));
 }
 
 /* =========================
    CATEGORY MERGING
 ========================= */
-function getAllCategoryOptions(){
+function getAllCategoryOptions() {
   const set = new Map();
 
-  for(const c of loadCategories()) set.set(c.toLowerCase(), c);
-  for(const b of loadBudgets()) set.set(String(b.category).toLowerCase(), b.category);
+  for (const c of loadCategories()) set.set(c.toLowerCase(), c);
+  for (const b of loadBudgets()) set.set(String(b.category).toLowerCase(), b.category);
 
-  for(const t of loadTx()){
-    if(t.category) set.set(String(t.category).toLowerCase(), t.category);
+  for (const t of loadTx()) {
+    if (t.category) set.set(String(t.category).toLowerCase(), t.category);
   }
 
-  return Array.from(set.values()).sort((a,b)=>a.localeCompare(b));
+  return Array.from(set.values()).sort((a, b) => a.localeCompare(b));
 }
 
 /* =========================
    CALCULATIONS
 ========================= */
-function computeTotals(txs){
+function computeTotals(txs) {
   let income = 0;
   let expenses = 0;
   let savings = 0;
   let investment = 0;
 
-  for(const t of txs){
+  for (const t of txs) {
     const amt = Number(t.amount || 0);
 
-    if(t.type === "income") income += amt;
-    if(t.type === "expense") expenses += Math.abs(amt);
-    if(t.type === "savings") savings += amt;
-    if(t.type === "investment") investment += amt;
+    if (t.type === "income") income += amt;
+    if (t.type === "expense") expenses += Math.abs(amt);
+    if (t.type === "savings") savings += amt;
+    if (t.type === "investment") investment += amt;
   }
 
   const balance = income - expenses + savings + investment;
   return { income, expenses, savings, investment, balance };
 }
 
-function expenseByCategory(txs){
+function expenseByCategory(txs) {
   const m = new Map();
 
-  for(const t of txs){
-    if(t.type !== "expense") continue;
+  for (const t of txs) {
+    if (t.type !== "expense") continue;
+
     const cat = t.category || "Other";
     const amt = Math.abs(Number(t.amount || 0));
+
     m.set(cat, (m.get(cat) || 0) + amt);
   }
 
@@ -190,26 +369,27 @@ function expenseByCategory(txs){
 }
 
 /* =========================
-   TRANSACTIONS UI HELPERS
+   TRANSACTION UI HELPERS
 ========================= */
-function clearTxError(){
+function clearTxError() {
   const b = document.getElementById("txError");
   b.style.display = "none";
   b.textContent = "";
 }
 
-function txError(msg){
+function txError(msg) {
   const b = document.getElementById("txError");
   b.style.display = "block";
   b.textContent = msg;
 }
 
-function populateTxCategoryDropdown(selected){
+function populateTxCategoryDropdown(selected) {
   const sel = document.getElementById("txCategory");
   const cats = getAllCategoryOptions();
+
   sel.innerHTML = "";
 
-  for(const c of cats){
+  for (const c of cats) {
     const opt = document.createElement("option");
     opt.value = c;
     opt.textContent = c;
@@ -225,39 +405,39 @@ function populateTxCategoryDropdown(selected){
   onTxCategoryChange();
 }
 
-function onTxCategoryChange(){
+function onTxCategoryChange() {
   const v = document.getElementById("txCategory").value;
   const input = document.getElementById("txNewCategory");
 
-  if(v === "__new__"){
+  if (v === "__new__") {
     input.classList.remove("hidden");
     input.value = "";
     input.focus();
-  }else{
+  } else {
     input.classList.add("hidden");
     input.value = "";
   }
 }
 
-function openTxModalAdd(){
+function openTxModalAdd() {
   editingTxId = null;
   clearTxError();
 
   document.getElementById("txModalTitle").textContent = "Add Transaction";
   document.getElementById("txSaveBtn").textContent = "Save";
   document.getElementById("txType").value = "expense";
-  document.getElementById("txDate").value = new Date().toISOString().slice(0,10);
+  document.getElementById("txDate").value = new Date().toISOString().slice(0, 10);
   document.getElementById("txDesc").value = "";
   document.getElementById("txAmount").value = "";
 
-  populateTxCategoryDropdown("Food");
+  populateTxCategoryDropdown("Other");
   openModal("txModal");
 }
 
-function openTxModalEdit(id){
+function openTxModalEdit(id) {
   const txs = loadTx();
   const t = txs.find(x => x.id === id);
-  if(!t) return;
+  if (!t) return;
 
   editingTxId = id;
   clearTxError();
@@ -265,17 +445,15 @@ function openTxModalEdit(id){
   document.getElementById("txModalTitle").textContent = "Edit Transaction";
   document.getElementById("txSaveBtn").textContent = "Update";
   document.getElementById("txType").value = t.type;
-  document.getElementById("txDate").value = t.date || new Date().toISOString().slice(0,10);
+  document.getElementById("txDate").value = t.date || new Date().toISOString().slice(0, 10);
   document.getElementById("txDesc").value = t.desc || "";
-
-  const amt = Number(t.amount || 0);
-  document.getElementById("txAmount").value = Math.abs(amt);
+  document.getElementById("txAmount").value = Math.abs(Number(t.amount || 0));
 
   populateTxCategoryDropdown(t.category || "Other");
   openModal("txModal");
 }
 
-function saveTransaction(){
+function saveTransaction() {
   clearTxError();
 
   const type = document.getElementById("txType").value;
@@ -283,19 +461,19 @@ function saveTransaction(){
   const desc = (document.getElementById("txDesc").value || "").trim();
   const amountRaw = Number(document.getElementById("txAmount").value);
 
-  if(!date) return txError("Pick a date.");
-  if(!desc) return txError("Enter a description.");
-  if(!Number.isFinite(amountRaw) || amountRaw <= 0) return txError("Amount must be a positive number.");
+  if (!date) return txError("Pick a date.");
+  if (!desc) return txError("Enter a description.");
+  if (!Number.isFinite(amountRaw) || amountRaw <= 0) return txError("Amount must be a positive number.");
 
   let category = document.getElementById("txCategory").value;
   const newCat = (document.getElementById("txNewCategory").value || "").trim();
 
-  if(category === "__new__"){
-    if(!newCat) return txError("Enter a new category name.");
+  if (category === "__new__") {
+    if (!newCat) return txError("Enter a new category name.");
     category = newCat;
 
     const cats = loadCategories();
-    if(!cats.some(c => c.toLowerCase() === newCat.toLowerCase())){
+    if (!cats.some(c => c.toLowerCase() === newCat.toLowerCase())) {
       cats.push(newCat);
       saveCategories(cats);
     }
@@ -304,9 +482,10 @@ function saveTransaction(){
   const storedAmount = (type === "expense") ? -Math.abs(amountRaw) : Math.abs(amountRaw);
   const txs = loadTx();
 
-  if(editingTxId){
+  if (editingTxId) {
     const idx = txs.findIndex(x => x.id === editingTxId);
-    if(idx >= 0){
+
+    if (idx >= 0) {
       txs[idx] = {
         id: editingTxId,
         type,
@@ -316,7 +495,7 @@ function saveTransaction(){
         category
       };
     }
-  }else{
+  } else {
     txs.push({
       id: uid(),
       type,
@@ -332,13 +511,13 @@ function saveTransaction(){
   renderAll();
 }
 
-function deleteTransaction(id){
+function deleteTransaction(id) {
   const txs = loadTx().filter(t => t.id !== id);
   saveTx(txs);
   renderAll();
 }
 
-function txRow(t, showActions){
+function txRow(t, showActions) {
   const amt = Number(t.amount || 0);
   const type = t.type || "expense";
   const displayAmt = Math.abs(amt);
@@ -367,8 +546,8 @@ function txRow(t, showActions){
   return el;
 }
 
-function filteredTransactions(txs){
-  if(!searchTerm) return txs;
+function filteredTransactions(txs) {
+  if (!searchTerm) return txs;
 
   return txs.filter(t => {
     const hay = `${t.desc || ""} ${t.category || ""} ${t.type || ""}`.toLowerCase();
@@ -379,19 +558,19 @@ function filteredTransactions(txs){
 /* =========================
    BUDGET UI HELPERS
 ========================= */
-function clearBudError(){
+function clearBudError() {
   const b = document.getElementById("budError");
   b.style.display = "none";
   b.textContent = "";
 }
 
-function budError(msg){
+function budError(msg) {
   const b = document.getElementById("budError");
   b.style.display = "block";
   b.textContent = msg;
 }
 
-function openBudgetModalAdd(){
+function openBudgetModalAdd() {
   editingBudId = null;
   clearBudError();
 
@@ -404,10 +583,10 @@ function openBudgetModalAdd(){
   document.getElementById("budCategory").focus();
 }
 
-function openBudgetModalEdit(id){
+function openBudgetModalEdit(id) {
   const buds = loadBudgets();
   const b = buds.find(x => x.id === id);
-  if(!b) return;
+  if (!b) return;
 
   editingBudId = id;
   clearBudError();
@@ -421,31 +600,31 @@ function openBudgetModalEdit(id){
   document.getElementById("budCategory").focus();
 }
 
-function saveBudget(){
+function saveBudget() {
   clearBudError();
 
   const cat = (document.getElementById("budCategory").value || "").trim();
   const lim = Number(document.getElementById("budLimit").value);
 
-  if(!cat) return budError("Enter a category.");
-  if(!Number.isFinite(lim) || lim < 0) return budError("Limit must be 0 or more.");
+  if (!cat) return budError("Enter a category.");
+  if (!Number.isFinite(lim) || lim < 0) return budError("Limit must be 0 or more.");
 
   const buds = loadBudgets();
-
   const dup = buds.find(x => x.category.toLowerCase() === cat.toLowerCase() && x.id !== editingBudId);
-  if(dup) return budError("That category already exists. Edit it instead.");
 
-  if(editingBudId){
+  if (dup) return budError("That category already exists. Edit it instead.");
+
+  if (editingBudId) {
     const idx = buds.findIndex(x => x.id === editingBudId);
-    if(idx >= 0) buds[idx] = { id: editingBudId, category: cat, limit: lim };
-  }else{
+    if (idx >= 0) buds[idx] = { id: editingBudId, category: cat, limit: lim };
+  } else {
     buds.push({ id: uid(), category: cat, limit: lim });
   }
 
   saveBudgets(buds);
 
   const cats = loadCategories();
-  if(!cats.some(c => c.toLowerCase() === cat.toLowerCase())){
+  if (!cats.some(c => c.toLowerCase() === cat.toLowerCase())) {
     cats.push(cat);
     saveCategories(cats);
   }
@@ -454,26 +633,28 @@ function saveBudget(){
   renderAll();
 }
 
-function deleteBudget(id){
+function deleteBudget(id) {
   const buds = loadBudgets().filter(b => b.id !== id);
   saveBudgets(buds);
   renderAll();
 }
 
-function budgetStatus(spent, limit){
-  if(limit <= 0) return {label:"On Track", cls:"good"};
+function budgetStatus(spent, limit) {
+  if (limit <= 0) return { label: "On Track", cls: "good" };
+
   const pct = spent / limit;
-  if(pct >= 1) return {label:"Over Budget", cls:"bad"};
-  if(pct >= 0.9) return {label:"Almost There", cls:"warn"};
-  return {label:"On Track", cls:"good"};
+
+  if (pct >= 1) return { label: "Over Budget", cls: "bad" };
+  if (pct >= 0.9) return { label: "Almost There", cls: "warn" };
+  return { label: "On Track", cls: "good" };
 }
 
 /* =========================
    RENDERING
 ========================= */
-function renderSummary(){
+function renderSummary() {
   const txs = loadTx();
-  const {income, expenses, savings, balance} = computeTotals(txs);
+  const { income, expenses, savings, balance } = computeTotals(txs);
 
   document.getElementById("sum-income").textContent = money(income);
   document.getElementById("sum-expenses").textContent = money(expenses);
@@ -481,27 +662,27 @@ function renderSummary(){
   document.getElementById("sum-balance").textContent = money(balance);
 }
 
-function renderChart(){
+function renderChart() {
   const txs = loadTx();
   const map = expenseByCategory(txs);
-  const rows = Array.from(map.entries()).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const rows = Array.from(map.entries()).sort((a, b) => b[1] - a[1]).slice(0, 5);
 
   const wrap = document.getElementById("chartWrap");
   wrap.innerHTML = "";
 
-  if(rows.length === 0){
-    wrap.innerHTML = `<div class="chart-empty">No expenses yet. Add an&nbsp;<b>Expense</b>&nbsp;to see the chart.</div>`;
+  if (rows.length === 0) {
+    wrap.innerHTML = `<div class="chart-empty">No expenses yet. Add an <b>Expense</b> to see the chart.</div>`;
     return;
   }
 
-  const colors = ['#00c853', '#8b5cf6', '#f59e0b', '#ef4444', '#3b82f6'];
+  const colors = ["#00c853", "#8b5cf6", "#f59e0b", "#ef4444", "#3b82f6"];
   const total = rows.reduce((sum, row) => sum + row[1], 0);
 
   let gradientStops = [];
   let currentPct = 0;
   let legendHtml = "";
 
-  for(let i = 0; i < rows.length; i++){
+  for (let i = 0; i < rows.length; i++) {
     const [cat, val] = rows[i];
     const pct = (val / total) * 100;
     const color = colors[i % colors.length];
@@ -520,95 +701,74 @@ function renderChart(){
     `;
   }
 
-  const conicGradient = `conic-gradient(${gradientStops.join(', ')})`;
+  const conicGradient = `conic-gradient(${gradientStops.join(", ")})`;
 
   wrap.innerHTML = `
     <div class="pie-container">
-      <div class="pie-chart" style="background: ${conicGradient}"></div>
-      <div class="pie-legend">
-        ${legendHtml}
-      </div>
+      <div class="pie-chart" style="background:${conicGradient}"></div>
+      <div class="pie-legend">${legendHtml}</div>
     </div>
   `;
 }
 
-function renderRecent(){
-  const txs = loadTx().slice().sort((a,b)=>(b.date || "").localeCompare(a.date || ""));
-  const recent = txs.slice(0,6);
+function renderRecent() {
+  const txs = loadTx().slice().sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+  const recent = txs.slice(0, 6);
   const wrap = document.getElementById("recentList");
+
   wrap.innerHTML = "";
 
-  if(recent.length === 0){
-    wrap.innerHTML = `<div class="chart-empty">Nothing yet. Click&nbsp;<b> + Add Transaction</b>&nbsp;to start.</div>`;
+  if (recent.length === 0) {
+    wrap.innerHTML = `<div class="chart-empty">Nothing yet. Click <b>+ Add Transaction</b> to start.</div>`;
     return;
   }
 
-  for(const t of recent){
-    wrap.appendChild(txRow(t,false));
+  for (const t of recent) {
+    wrap.appendChild(txRow(t, false));
   }
 }
 
-function renderAllTransactions(){
-  const txs = loadTx().slice().sort((a,b)=>(b.date || "").localeCompare(a.date || ""));
-  const list = filteredTransactions(txs);
+function renderTransactions() {
+  const txs = filteredTransactions(
+    loadTx().slice().sort((a, b) => (b.date || "").localeCompare(a.date || ""))
+  );
 
   const wrap = document.getElementById("allList");
   wrap.innerHTML = "";
 
-  if(list.length === 0){
-    wrap.innerHTML = `<div class="chart-empty">No matching transactions.</div>`;
+  if (txs.length === 0) {
+    wrap.innerHTML = `<div class="chart-empty">No matching transactions found.</div>`;
     return;
   }
 
-  for(const t of list){
-    wrap.appendChild(txRow(t,true));
+  for (const t of txs) {
+    wrap.appendChild(txRow(t, true));
   }
 }
 
-function renderBudgets(){
+function renderBudget() {
+  const buds = loadBudgets().slice().sort((a, b) => a.category.localeCompare(b.category));
   const txs = loadTx();
-  const buds = loadBudgets();
-  const spentMap = expenseByCategory(txs);
-
-  const totalBudget = buds.reduce((s,b)=>s + Number(b.limit || 0), 0);
-  let totalSpent = 0;
-
-  for(const b of buds){
-    totalSpent += (spentMap.get(b.category) || 0);
-  }
-
-  const remaining = totalBudget - totalSpent;
-  const pct = totalBudget > 0 ? Math.min(100, Math.round((totalSpent / totalBudget) * 100)) : 0;
-
-  document.getElementById("bud-total").textContent  = "$" + Math.round(totalBudget).toLocaleString();
-  document.getElementById("bud-spent").textContent  = "$" + Math.round(totalSpent).toLocaleString();
-  document.getElementById("bud-remain").textContent = "$" + Math.round(remaining).toLocaleString();
-  document.getElementById("bud-fill").style.width = pct + "%";
-  document.getElementById("bud-pct").textContent = pct + "%";
+  const expenses = expenseByCategory(txs);
 
   const grid = document.getElementById("budgetGrid");
   grid.innerHTML = "";
 
-  if(buds.length === 0){
-    grid.innerHTML = `<div class="chart-empty">No budgets. Click <b>+ New Budget</b> to add one.</div>`;
-    return;
-  }
+  let totalBudget = 0;
+  let totalSpent = 0;
 
-  for(const b of buds){
-    const limit = Number(b.limit || 0);
-    const spent = spentMap.get(b.category) || 0;
-    const ratio = (limit > 0) ? Math.min(1, spent / limit) : 0;
-    const width = Math.round(ratio * 100);
+  for (const b of buds) {
+    const spent = expenses.get(b.category) || 0;
+    const remain = b.limit - spent;
+    const pct = b.limit > 0 ? Math.min((spent / b.limit) * 100, 100) : 0;
+    const status = budgetStatus(spent, b.limit);
 
-    const status = budgetStatus(spent, limit);
-
-    let rightText = "";
-    if(limit <= 0) rightText = `<span class="right">$0 left</span>`;
-    else if(spent > limit) rightText = `<span class="right red-text">$${Math.round(spent - limit)} over</span>`;
-    else rightText = `<span class="right">$${Math.round(limit - spent)} left</span>`;
+    totalBudget += b.limit;
+    totalSpent += spent;
 
     const card = document.createElement("div");
     card.className = "budget-card";
+
     card.innerHTML = `
       <div class="budget-actions">
         <button class="mini-btn" onclick="openBudgetModalEdit('${b.id}')">Edit</button>
@@ -616,33 +776,62 @@ function renderBudgets(){
       </div>
 
       <span class="badge ${status.cls}">${status.label}</span>
-      <h3 class="category">${escapeHtml(b.category)}</h3>
-      <p class="money">${money(spent)} <span class="gray">of ${money(limit)}</span></p>
+      <div class="category">${escapeHtml(b.category)}</div>
+      <p class="money">${money(spent)} <span class="gray">of ${money(b.limit)}</span></p>
+
       <div class="bar-container">
-        <div class="bar-fill2" style="width:${width}%; background:${status.cls === 'bad' ? 'var(--bad)' : (status.cls === 'warn' ? 'var(--warn)' : '#3b82f6')};"></div>
+        <div class="bar-fill2" style="width:${pct}%"></div>
       </div>
+
       <p class="details">
-        ${limit > 0 ? Math.round((spent / limit) * 100) : 0}% used
-        ${rightText}
+        Remaining <span class="right ${remain < 0 ? 'red-text' : ''}">${money(remain)}</span>
       </p>
     `;
+
     grid.appendChild(card);
+  }
+
+  const remaining = totalBudget - totalSpent;
+  const overallPct = totalBudget > 0 ? Math.min((totalSpent / totalBudget) * 100, 100) : 0;
+
+  document.getElementById("bud-total").textContent = money(totalBudget);
+  document.getElementById("bud-spent").textContent = money(totalSpent);
+  document.getElementById("bud-remain").textContent = money(remaining);
+  document.getElementById("bud-fill").style.width = `${overallPct}%`;
+  document.getElementById("bud-pct").textContent = `${overallPct.toFixed(0)}%`;
+
+  if (buds.length === 0) {
+    grid.innerHTML = `<div class="chart-empty">No budgets yet. Click <b>+ New Budget</b> to add one.</div>`;
   }
 }
 
-function renderAll(){
+/* =========================
+   MAIN RENDER
+========================= */
+function renderAll() {
   renderSummary();
   renderChart();
   renderRecent();
-  renderAllTransactions();
-  renderBudgets();
+  renderTransactions();
+  renderBudget();
 }
 
 /* =========================
-   INIT
+   APP INIT
 ========================= */
-(function init(){
+(function initApp() {
   loadBudgets();
   loadCategories();
+
+  const currentUser = getCurrentUser();
+
+  if (currentUser) {
+    openApp();
+  } else {
+    document.getElementById("authPage").classList.remove("hidden");
+    document.getElementById("appShell").classList.add("hidden");
+    showAuthView("login");
+  }
+
   renderAll();
 })();
