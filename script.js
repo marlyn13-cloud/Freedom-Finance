@@ -220,56 +220,42 @@ function openApp() {
   const authPage = document.getElementById("authPage");
   const appShell = document.getElementById("appShell");
   
-  // Hide Login Page
   if (authPage) {
     authPage.classList.add("hidden");
-    authPage.style.display = "none"; // Forced fix
+    authPage.style.display = "none"; // Force hide
   }
   
-  // Show Dashboard Shell
   if (appShell) {
     appShell.classList.remove("hidden");
-    appShell.style.display = "block"; // Forced fix
+    appShell.style.display = "block"; // Force show
   }
   
   showPage("dashboard");
 }
 
 /* =========================
-   LOGIN ACTION
+   LINKED LOGIN ACTION
 ========================= */
 async function handleLogin(e) {
-  // Prevent the page from refreshing if called from a form submit
-  if (e) e.preventDefault();
-  
+  if (e) e.preventDefault(); // Stop the page from refreshing
   clearAuthMessages();
   
-  const emailInput = document.getElementById("loginIdentifier");
-  const passwordInput = document.getElementById("loginPassword");
+  const email = (document.getElementById("loginIdentifier").value || "").trim().toLowerCase();
+  const password = document.getElementById("loginPassword").value || "";
 
-  if (!emailInput || !passwordInput) return;
+  if (!email || !password) return showError("loginError", "Email and password required.");
 
-  const email = emailInput.value.trim().toLowerCase();
-  const password = passwordInput.value;
-
-  if (!email || !password) {
-    return showError("loginError", "Please enter both email and password.");
-  }
-
-  // Supabase Authentication
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email: email,
-    password: password,
-  });
+  // 1. Attempt Sign In
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
+    // If this triggers, check if you confirmed your email in Supabase!
     return showError("loginError", error.message);
   }
 
-  // If successful, openApp() is usually triggered by onAuthStateChange,
-  // but we call it here as well for a snappy UI transition.
+  // 2. Success! Trigger the transition to the Dashboard
   openApp();
-  fetchAllData();
+  fetchAllData(); // Load your transactions/budgets from the DB
 }
 /* =========================
    MODAL HELPERS
