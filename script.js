@@ -220,41 +220,54 @@ function openApp() {
   const authPage = document.getElementById("authPage");
   const appShell = document.getElementById("appShell");
   
-  // Use inline styles to forcefully override any CSS conflicts
-  if(authPage) {
+  // Hide Login Page
+  if (authPage) {
     authPage.classList.add("hidden");
-    authPage.style.display = "none"; 
+    authPage.style.display = "none"; // Forced fix
   }
   
-  if(appShell) {
+  // Show Dashboard Shell
+  if (appShell) {
     appShell.classList.remove("hidden");
-    appShell.style.display = "block"; 
+    appShell.style.display = "block"; // Forced fix
   }
   
   showPage("dashboard");
 }
 
 /* =========================
-   UPDATED LOGIN FUNCTION
+   LOGIN ACTION
 ========================= */
 async function handleLogin(e) {
+  // Prevent the page from refreshing if called from a form submit
   if (e) e.preventDefault();
+  
   clearAuthMessages();
   
-  const email = (document.getElementById("loginIdentifier").value || "").trim().toLowerCase();
-  const password = document.getElementById("loginPassword").value || "";
+  const emailInput = document.getElementById("loginIdentifier");
+  const passwordInput = document.getElementById("loginPassword");
 
-  if (!email || !password) return showError("loginError", "Email and password required.");
+  if (!emailInput || !passwordInput) return;
 
-  // Attempt to sign in
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  const email = emailInput.value.trim().toLowerCase();
+  const password = passwordInput.value;
+
+  if (!email || !password) {
+    return showError("loginError", "Please enter both email and password.");
+  }
+
+  // Supabase Authentication
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: email,
+    password: password,
+  });
 
   if (error) {
-    console.error("Supabase Login Error:", error.message);
     return showError("loginError", error.message);
   }
 
-  // If successful, forcefully trigger the app opening!
+  // If successful, openApp() is usually triggered by onAuthStateChange,
+  // but we call it here as well for a snappy UI transition.
   openApp();
   fetchAllData();
 }
