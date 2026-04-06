@@ -1,8 +1,9 @@
 create extension if not exists pgcrypto;
 
--- PROFILES TABLE
+-- PROFILES TABLE (Updated to include email)
 create table if not exists public.profiles (
     user_id uuid primary key references auth.users(id) on delete cascade,
+    email varchar(255) unique,
     first_name varchar(100),
     last_name varchar(100),
     created_at timestamptz default now()
@@ -18,9 +19,8 @@ create table if not exists public.categories (
     created_at timestamptz default now()
 );
 
-alter table public.categories
-add constraint categories_user_id_category_name_unique
-unique (user_id, category_name);
+alter table public.categories drop constraint if exists categories_user_id_category_name_unique;
+alter table public.categories add constraint categories_user_id_category_name_unique unique (user_id, category_name);
 
 -- TRANSACTIONS TABLE
 create table if not exists public.transactions (
@@ -66,9 +66,8 @@ create table if not exists public.budgets (
     created_at timestamptz default now()
 );
 
-alter table public.budgets
-add constraint budgets_unique_user_category_month_year
-unique (user_id, category_id, month, year);
+alter table public.budgets drop constraint if exists budgets_unique_user_category_month_year;
+alter table public.budgets add constraint budgets_unique_user_category_month_year unique (user_id, category_id, month, year);
 
 -- RECURRING TRANSACTIONS TABLE
 create table if not exists public.recurring_transactions (
@@ -100,147 +99,114 @@ alter table public.savings_goals enable row level security;
 alter table public.budgets enable row level security;
 alter table public.recurring_transactions enable row level security;
 
--- RLS POLICIES
--- Each user can only access their own data
+-- ==========================================
+-- RLS POLICIES (Users can only access their own data)
+-- ==========================================
 
 -- PROFILES
-create policy "Users can view own profile"
-on public.profiles
-for select
-using (auth.uid() = user_id);
+drop policy if exists "Users can view own profile" on public.profiles;
+create policy "Users can view own profile" on public.profiles for select using (auth.uid() = user_id);
 
-create policy "Users can insert own profile"
-on public.profiles
-for insert
-with check (auth.uid() = user_id);
-
-create policy "Users can update own profile"
-on public.profiles
-for update
-using (auth.uid() = user_id);
+drop policy if exists "Users can update own profile" on public.profiles;
+create policy "Users can update own profile" on public.profiles for update using (auth.uid() = user_id);
 
 -- CATEGORIES
-create policy "Users can view own categories"
-on public.categories
-for select
-using (auth.uid() = user_id);
+drop policy if exists "Users can view own categories" on public.categories;
+create policy "Users can view own categories" on public.categories for select using (auth.uid() = user_id);
 
-create policy "Users can insert own categories"
-on public.categories
-for insert
-with check (auth.uid() = user_id);
+drop policy if exists "Users can insert own categories" on public.categories;
+create policy "Users can insert own categories" on public.categories for insert with check (auth.uid() = user_id);
 
-create policy "Users can update own categories"
-on public.categories
-for update
-using (auth.uid() = user_id);
+drop policy if exists "Users can update own categories" on public.categories;
+create policy "Users can update own categories" on public.categories for update using (auth.uid() = user_id);
 
-create policy "Users can delete own categories"
-on public.categories
-for delete
-using (auth.uid() = user_id);
+drop policy if exists "Users can delete own categories" on public.categories;
+create policy "Users can delete own categories" on public.categories for delete using (auth.uid() = user_id);
 
 -- TRANSACTIONS
-create policy "Users can view own transactions"
-on public.transactions
-for select
-using (auth.uid() = user_id);
+drop policy if exists "Users can view own transactions" on public.transactions;
+create policy "Users can view own transactions" on public.transactions for select using (auth.uid() = user_id);
 
-create policy "Users can insert own transactions"
-on public.transactions
-for insert
-with check (auth.uid() = user_id);
+drop policy if exists "Users can insert own transactions" on public.transactions;
+create policy "Users can insert own transactions" on public.transactions for insert with check (auth.uid() = user_id);
 
-create policy "Users can update own transactions"
-on public.transactions
-for update
-using (auth.uid() = user_id);
+drop policy if exists "Users can update own transactions" on public.transactions;
+create policy "Users can update own transactions" on public.transactions for update using (auth.uid() = user_id);
 
-create policy "Users can delete own transactions"
-on public.transactions
-for delete
-using (auth.uid() = user_id);
+drop policy if exists "Users can delete own transactions" on public.transactions;
+create policy "Users can delete own transactions" on public.transactions for delete using (auth.uid() = user_id);
 
 -- INCOME
-create policy "Users can view own income"
-on public.income
-for select
-using (auth.uid() = user_id);
+drop policy if exists "Users can view own income" on public.income;
+create policy "Users can view own income" on public.income for select using (auth.uid() = user_id);
 
-create policy "Users can insert own income"
-on public.income
-for insert
-with check (auth.uid() = user_id);
+drop policy if exists "Users can insert own income" on public.income;
+create policy "Users can insert own income" on public.income for insert with check (auth.uid() = user_id);
 
-create policy "Users can update own income"
-on public.income
-for update
-using (auth.uid() = user_id);
+drop policy if exists "Users can update own income" on public.income;
+create policy "Users can update own income" on public.income for update using (auth.uid() = user_id);
 
-create policy "Users can delete own income"
-on public.income
-for delete
-using (auth.uid() = user_id);
+drop policy if exists "Users can delete own income" on public.income;
+create policy "Users can delete own income" on public.income for delete using (auth.uid() = user_id);
 
 -- SAVINGS GOALS
-create policy "Users can view own savings goals"
-on public.savings_goals
-for select
-using (auth.uid() = user_id);
+drop policy if exists "Users can view own savings goals" on public.savings_goals;
+create policy "Users can view own savings goals" on public.savings_goals for select using (auth.uid() = user_id);
 
-create policy "Users can insert own savings goals"
-on public.savings_goals
-for insert
-with check (auth.uid() = user_id);
+drop policy if exists "Users can insert own savings goals" on public.savings_goals;
+create policy "Users can insert own savings goals" on public.savings_goals for insert with check (auth.uid() = user_id);
 
-create policy "Users can update own savings goals"
-on public.savings_goals
-for update
-using (auth.uid() = user_id);
+drop policy if exists "Users can update own savings goals" on public.savings_goals;
+create policy "Users can update own savings goals" on public.savings_goals for update using (auth.uid() = user_id);
 
-create policy "Users can delete own savings goals"
-on public.savings_goals
-for delete
-using (auth.uid() = user_id);
+drop policy if exists "Users can delete own savings goals" on public.savings_goals;
+create policy "Users can delete own savings goals" on public.savings_goals for delete using (auth.uid() = user_id);
 
 -- BUDGETS
-create policy "Users can view own budgets"
-on public.budgets
-for select
-using (auth.uid() = user_id);
+drop policy if exists "Users can view own budgets" on public.budgets;
+create policy "Users can view own budgets" on public.budgets for select using (auth.uid() = user_id);
 
-create policy "Users can insert own budgets"
-on public.budgets
-for insert
-with check (auth.uid() = user_id);
+drop policy if exists "Users can insert own budgets" on public.budgets;
+create policy "Users can insert own budgets" on public.budgets for insert with check (auth.uid() = user_id);
 
-create policy "Users can update own budgets"
-on public.budgets
-for update
-using (auth.uid() = user_id);
+drop policy if exists "Users can update own budgets" on public.budgets;
+create policy "Users can update own budgets" on public.budgets for update using (auth.uid() = user_id);
 
-create policy "Users can delete own budgets"
-on public.budgets
-for delete
-using (auth.uid() = user_id);
+drop policy if exists "Users can delete own budgets" on public.budgets;
+create policy "Users can delete own budgets" on public.budgets for delete using (auth.uid() = user_id);
 
 -- RECURRING TRANSACTIONS
-create policy "Users can view own recurring transactions"
-on public.recurring_transactions
-for select
-using (auth.uid() = user_id);
+drop policy if exists "Users can view own recurring transactions" on public.recurring_transactions;
+create policy "Users can view own recurring transactions" on public.recurring_transactions for select using (auth.uid() = user_id);
 
-create policy "Users can insert own recurring transactions"
-on public.recurring_transactions
-for insert
-with check (auth.uid() = user_id);
+drop policy if exists "Users can insert own recurring transactions" on public.recurring_transactions;
+create policy "Users can insert own recurring transactions" on public.recurring_transactions for insert with check (auth.uid() = user_id);
 
-create policy "Users can update own recurring transactions"
-on public.recurring_transactions
-for update
-using (auth.uid() = user_id);
+drop policy if exists "Users can update own recurring transactions" on public.recurring_transactions;
+create policy "Users can update own recurring transactions" on public.recurring_transactions for update using (auth.uid() = user_id);
 
-create policy "Users can delete own recurring transactions"
-on public.recurring_transactions
-for delete
-using (auth.uid() = user_id);
+drop policy if exists "Users can delete own recurring transactions" on public.recurring_transactions;
+create policy "Users can delete own recurring transactions" on public.recurring_transactions for delete using (auth.uid() = user_id);
+
+-- ==========================================
+-- AUTOMATION: AUTH TRIGGER
+-- ==========================================
+
+-- 1. Create a function that copies the user ID and Email into public.profiles
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer set search_path = ''
+as $$
+begin
+  insert into public.profiles (user_id, email)
+  values (new.id, new.email);
+  return new;
+end;
+$$;
+
+-- 2. Trigger the function every time a new user is created in Supabase Auth
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();
