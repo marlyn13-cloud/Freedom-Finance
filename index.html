@@ -1,178 +1,414 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Freedom Finance</title>
 
-  <link rel="stylesheet" href="style.css?v=2" />
+  <!-- =========================
+       EXTERNAL CSS FILE
+  ========================== -->
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-   <section id="page-login" class="page active login-wrapper">
-    <div class="login-card">
-      <h1 class="login-title">Welcome Back</h1>
-      <p class="login-subtitle">Sign in to continue to your account</p>
+  <!-- =========================
+       AUTH PAGE
+  ========================== -->
+  <section id="authPage" class="auth-page">
+    <!-- =========================
+         LEFT SIDE PREVIEW
+    ========================== -->
+    <div class="auth-preview">
+      <div class="auth-preview-inner">
+        <div class="auth-brand">Freedom Finance</div>
+        <h1 class="auth-heading">Take control of your money with confidence.</h1>
+        <p class="auth-subheading">
+          Track transactions, manage budgets, and visualize your spending in one place.
+        </p>
 
-      <form onsubmit="handleLogin(event)">
-        <div class="form-group">
-          <label>Username</label>
-          <div class="input-with-icon">
-            <svg class="icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            <input type="text" placeholder="Enter your username" required />
+        <div class="preview-shell">
+          <div class="preview-topbar">
+            <div class="preview-logo">Freedom Finance</div>
+            <div class="preview-top-actions">
+              <div class="preview-pill">Dashboard</div>
+              <div class="preview-pill ghost">Transactions</div>
+              <div class="preview-pill ghost">Budget</div>
+            </div>
+          </div>
+
+          <div class="preview-grid">
+            <div class="preview-summary-col">
+              <div class="preview-card">
+                <div class="preview-title">Total Balance</div>
+                <div class="preview-value">$4,820.00</div>
+              </div>
+
+              <div class="preview-card">
+                <div class="preview-title">Income</div>
+                <div class="preview-value">$5,600.00</div>
+              </div>
+
+              <div class="preview-card">
+                <div class="preview-title">Expenses</div>
+                <div class="preview-value">$780.00</div>
+              </div>
+
+              <div class="preview-card">
+                <div class="preview-title">Savings</div>
+                <div class="preview-value">$350.00</div>
+              </div>
+            </div>
+
+            <div class="preview-main-col">
+              <div class="preview-card preview-big">
+                <div class="preview-row-head">
+                  <div>
+                    <h3>Top 5 Spending Categories</h3>
+                    <div class="preview-muted">Based on expenses by category</div>
+                  </div>
+                </div>
+
+                <div class="preview-chart-wrap">
+                  <div class="preview-pie-container">
+                    <div class="preview-pie-chart"></div>
+
+                    <div class="preview-pie-legend">
+                      <div class="preview-legend-item">
+                        <div class="preview-legend-left">
+                          <div class="preview-legend-color c1"></div>
+                          <div class="preview-legend-label">Food</div>
+                        </div>
+                        <div class="preview-legend-val">$220.00</div>
+                      </div>
+
+                      <div class="preview-legend-item">
+                        <div class="preview-legend-left">
+                          <div class="preview-legend-color c2"></div>
+                          <div class="preview-legend-label">Gas</div>
+                        </div>
+                        <div class="preview-legend-val">$140.00</div>
+                      </div>
+
+                      <div class="preview-legend-item">
+                        <div class="preview-legend-left">
+                          <div class="preview-legend-color c3"></div>
+                          <div class="preview-legend-label">Shopping</div>
+                        </div>
+                        <div class="preview-legend-val">$180.00</div>
+                      </div>
+
+                      <div class="preview-legend-item">
+                        <div class="preview-legend-left">
+                          <div class="preview-legend-color c4"></div>
+                          <div class="preview-legend-label">Utilities</div>
+                        </div>
+                        <div class="preview-legend-val">$115.00</div>
+                      </div>
+
+                      <div class="preview-legend-item">
+                        <div class="preview-legend-left">
+                          <div class="preview-legend-color c5"></div>
+                          <div class="preview-legend-label">Dining Out</div>
+                        </div>
+                        <div class="preview-legend-val">$125.00</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="preview-card preview-big">
+                <div class="preview-row-head">
+                  <h3>Recent Transactions</h3>
+                </div>
+
+                <div class="preview-tx-list">
+                  <div class="preview-tx-item">
+                    <div class="preview-tx-left">
+                      <div class="preview-tx-title">Paycheck</div>
+                      <div class="preview-tx-sub">Salary • income • 2026-04-01</div>
+                    </div>
+                    <div class="preview-tx-amt income">+$2,800.00</div>
+                  </div>
+
+                  <div class="preview-tx-item">
+                    <div class="preview-tx-left">
+                      <div class="preview-tx-title">Groceries</div>
+                      <div class="preview-tx-sub">Food • expense • 2026-03-30</div>
+                    </div>
+                    <div class="preview-tx-amt expense">-$86.50</div>
+                  </div>
+
+                  <div class="preview-tx-item">
+                    <div class="preview-tx-left">
+                      <div class="preview-tx-title">Gas Station</div>
+                      <div class="preview-tx-sub">Transport • expense • 2026-03-29</div>
+                    </div>
+                    <div class="preview-tx-amt expense">-$42.10</div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-
-        <div class="form-group">
-          <label>Email</label>
-          <div class="input-with-icon">
-            <svg class="icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            <input type="email" placeholder="Enter your email" required />
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>Password</label>
-          <div class="input-with-icon">
-            <svg class="icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            <input type="password" placeholder="Enter your password" required />
-            <svg class="icon-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-          </div>
-        </div>
-
-        <div class="forgot-pwd">
-          <a href="#">Forgot password?</a>
-        </div>
-
-        <button type="submit" class="login-btn">Sign In</button>
-
-        <div class="signup-link">
-          Don't have an account? <a href="#">Sign up</a>
-        </div>
-      </form>
-    </div>
-  </section>
-
-  <div class="navbar" id="main-nav" style="display: none;">
-    <div class="nav-left">
-      <div class="logo">Freedom Finance</div>
-      <div class="nav-links">
-        <button id="tab-dashboard" class="active" onclick="showPage('dashboard')">Dashboard</button>
-        <button id="tab-transactions" onclick="showPage('transactions')">Transactions</button>
-        <button id="tab-budget" onclick="showPage('budget')">Budget</button>
-        <button id="tab-reports" onclick="showPage('reports')">Reports</button>
       </div>
     </div>
 
-    <div class="right-nav">
-      <button class="add-btn" onclick="openTxModalAdd()">+ Add Transaction</button>
-      <input class="search" placeholder="Search..." oninput="setSearch(this.value)" />
+    <!-- =========================
+         RIGHT SIDE AUTH PANEL
+    ========================== -->
+    <div class="auth-panel">
+      <div class="auth-card">
+        <div class="auth-card-brand">Freedom Finance</div>
+
+        <!-- =========================
+             LOGIN VIEW
+        ========================== -->
+        <div id="view-login" class="auth-view active">
+          <h2 class="auth-card-title">Welcome Back</h2>
+          <p class="auth-card-subtitle">Sign in to continue to your account</p>
+
+          <div class="form-group">
+            <label for="loginIdentifier">Username or Email</label>
+            <input id="loginIdentifier" type="text" placeholder="Enter your username or email" />
+          </div>
+
+          <div class="form-group">
+            <label for="loginPassword">Password</label>
+            <input id="loginPassword" type="password" placeholder="Enter your password" />
+          </div>
+
+          <div class="auth-links-row">
+            <button class="text-link" type="button" onclick="showAuthView('forgot')">Forgot password?</button>
+          </div>
+
+          <div class="error" id="loginError"></div>
+
+          <button class="auth-btn" type="button" onclick="handleLogin()">Sign In</button>
+
+          <div class="switch-text">
+            Don't have an account?
+            <button class="text-link inline" type="button" onclick="showAuthView('signup')">Sign up</button>
+          </div>
+        </div>
+
+        <!-- =========================
+             SIGN UP VIEW
+        ========================== -->
+        <div id="view-signup" class="auth-view">
+          <h2 class="auth-card-title">Create Account</h2>
+          <p class="auth-card-subtitle">Set up your Freedom Finance account</p>
+
+          <div class="form-group">
+            <label for="signupUsername">Username</label>
+            <input id="signupUsername" type="text" placeholder="Choose a username" />
+          </div>
+
+          <div class="form-group">
+            <label for="signupEmail">Email</label>
+            <input id="signupEmail" type="email" placeholder="Enter your email" />
+          </div>
+
+          <div class="form-group">
+            <label for="signupPassword">Password</label>
+            <input id="signupPassword" type="password" placeholder="Create a password" />
+          </div>
+
+          <div class="form-group">
+            <label for="signupConfirmPassword">Confirm Password</label>
+            <input id="signupConfirmPassword" type="password" placeholder="Confirm your password" />
+          </div>
+
+          <div class="error" id="signupError"></div>
+
+          <button class="auth-btn" type="button" onclick="handleSignup()">Create Account</button>
+
+          <div class="switch-text">
+            Already have an account?
+            <button class="text-link inline" type="button" onclick="showAuthView('login')">Sign in</button>
+          </div>
+        </div>
+
+        <!-- =========================
+             FORGOT PASSWORD VIEW
+        ========================== -->
+        <div id="view-forgot" class="auth-view">
+          <h2 class="auth-card-title">Forgot Password</h2>
+          <p class="auth-card-subtitle">Enter your email and set a new password</p>
+
+          <div class="form-group">
+            <label for="forgotEmail">Email</label>
+            <input id="forgotEmail" type="email" placeholder="Enter your email" />
+          </div>
+
+          <div class="form-group">
+            <label for="forgotNewPassword">New Password</label>
+            <input id="forgotNewPassword" type="password" placeholder="Enter a new password" />
+          </div>
+
+          <div class="error" id="forgotError"></div>
+          <div class="success" id="forgotSuccess"></div>
+
+          <button class="auth-btn" type="button" onclick="handleForgotPassword()">Reset Password</button>
+
+          <div class="switch-text">
+            Back to
+            <button class="text-link inline" type="button" onclick="showAuthView('login')">Sign in</button>
+          </div>
+        </div>
+
+        <div class="auth-note">
+          Demo front-end version. Your teammate can replace these functions with backend API calls later.
+        </div>
+      </div>
     </div>
+  </section>
+
+  <!-- =========================
+       APP SHELL
+  ========================== -->
+  <div id="appShell" class="hidden">
+    <!-- =========================
+         TOP NAVBAR
+    ========================== -->
+    <div class="navbar">
+      <div class="nav-left">
+        <div class="logo">Freedom Finance</div>
+        <div class="nav-links">
+          <button id="tab-dashboard" class="active" onclick="showPage('dashboard')">Dashboard</button>
+          <button id="tab-transactions" onclick="showPage('transactions')">Transactions</button>
+          <button id="tab-budget" onclick="showPage('budget')">Budget</button>
+          <button id="tab-reports" onclick="showPage('reports')">Reports</button>
+        </div>
+      </div>
+
+      <div class="right-nav">
+        <button class="add-btn" onclick="openTxModalAdd()">+ Add Transaction</button>
+        <input class="search" placeholder="Search..." oninput="setSearch(this.value)" />
+        <button class="logout-btn" onclick="logoutUser()">Logout</button>
+      </div>
+    </div>
+
+    <!-- =========================
+         DASHBOARD PAGE
+    ========================== -->
+    <section id="page-dashboard" class="page active">
+      <div class="dash-grid">
+        <div>
+          <div class="card summary-card">
+            <div class="summary-title">Total Balance</div>
+            <div class="summary-value" id="sum-balance">$0.00</div>
+          </div>
+
+          <div class="card summary-card">
+            <div class="summary-title">Income</div>
+            <div class="summary-value" id="sum-income">$0.00</div>
+          </div>
+
+          <div class="card summary-card">
+            <div class="summary-title">Expenses</div>
+            <div class="summary-value" id="sum-expenses">$0.00</div>
+          </div>
+
+          <div class="card summary-card">
+            <div class="summary-title">Savings</div>
+            <div class="summary-value" id="sum-savings">$0.00</div>
+          </div>
+        </div>
+
+        <div class="dash-main">
+          <div class="card card-pad">
+            <div class="row-head">
+              <div>
+                <h3>Top 5 Spending Categories</h3>
+                <div style="color:var(--muted); font-size:13px; margin-top:4px;">Based on expenses by category</div>
+              </div>
+              <span class="link-green" onclick="showPage('budget')">Budget</span>
+            </div>
+            <div class="chart-wrap" id="chartWrap"></div>
+          </div>
+
+          <div class="card card-pad">
+            <div class="row-head">
+              <h3>Recent Transactions</h3>
+              <span class="link-green" onclick="showPage('transactions')">View All</span>
+            </div>
+            <div class="tx-list" id="recentList"></div>
+            <div class="hint">Add salary/expenses/savings</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================
+         TRANSACTIONS PAGE
+    ========================== -->
+    <section id="page-transactions" class="page">
+      <div class="card card-pad">
+        <div class="row-head">
+          <h2 style="margin:0;">Transactions</h2>
+          <span class="link-green" onclick="openTxModalAdd()">+ Add</span>
+        </div>
+        <div class="hint">Edit/delete entries. Search filters by description/category/type.</div>
+        <div class="tx-list" id="allList"></div>
+      </div>
+    </section>
+
+    <!-- =========================
+         BUDGET PAGE
+    ========================== -->
+    <section id="page-budget" class="page">
+      <div class="budget-header">
+        <h1 class="budget-title">Budget Dashboard</h1>
+        <button class="new-budget-btn" onclick="openBudgetModalAdd()">+ New Budget</button>
+      </div>
+
+      <div class="budget-summary-row">
+        <div class="budget-summary purple">
+          <h2 class="card-title">Total Budget</h2>
+          <p class="big-number" id="bud-total">$0</p>
+          <p class="small-text">Monthly allocation</p>
+        </div>
+
+        <div class="budget-summary pink">
+          <h2 class="card-title">Total Spent</h2>
+          <p class="big-number" id="bud-spent">$0</p>
+          <div class="progress-bar-white">
+            <div class="fill" id="bud-fill" style="width:0%"></div>
+          </div>
+          <p class="small-text" id="bud-pct">0%</p>
+        </div>
+
+        <div class="budget-summary green">
+          <h2 class="card-title">Remaining</h2>
+          <p class="big-number" id="bud-remain">$0</p>
+          <p class="small-text">Available to spend</p>
+        </div>
+      </div>
+
+      <h2 class="section-title">Your Budgets</h2>
+      <div class="budget-grid" id="budgetGrid"></div>
+
+      <div class="hint">
+        Budgets are editable. Spent amounts are calculated from your transactions (Expense type) by category.
+      </div>
+    </section>
+
+    <!-- =========================
+         REPORTS PAGE
+    ========================== -->
+    <section id="page-reports" class="page">
+      <div class="card card-pad">
+        <h2 style="margin:0;">Reports</h2>
+        <p style="color:var(--muted); margin:8px 0 0;">Later: exports, monthly summaries, charts.</p>
+      </div>
+    </section>
   </div>
 
-  <section id="page-dashboard" class="page active">
-    <div class="dash-grid">
-      <div>
-        <div class="card summary-card">
-          <div class="summary-title">Total Balance</div>
-          <div class="summary-value" id="sum-balance">$0.00</div>
-        </div>
-
-        <div class="card summary-card">
-          <div class="summary-title">Income</div>
-          <div class="summary-value" id="sum-income">$0.00</div>
-        </div>
-
-        <div class="card summary-card">
-          <div class="summary-title">Expenses</div>
-          <div class="summary-value" id="sum-expenses">$0.00</div>
-        </div>
-
-        <div class="card summary-card">
-          <div class="summary-title">Savings</div>
-          <div class="summary-value" id="sum-savings">$0.00</div>
-        </div>
-      </div>
-
-      <div class="dash-main">
-        <div class="card card-pad">
-          <div class="row-head">
-            <div>
-              <h3>Top 5 Spending Categories</h3>
-              <div style="color:var(--muted); font-size:13px; margin-top:4px;">Based on expenses by category</div>
-            </div>
-            <span class="link-green" onclick="showPage('budget')">Budget</span>
-          </div>
-          <div class="chart-wrap" id="chartWrap"></div>
-        </div>
-
-        <div class="card card-pad">
-          <div class="row-head">
-            <h3>Recent Transactions</h3>
-            <span class="link-green" onclick="showPage('transactions')">View All</span>
-          </div>
-          <div class="tx-list" id="recentList"></div>
-          <div class="hint">Add salary/expenses/savings</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="page-transactions" class="page">
-    <div class="card card-pad">
-      <div class="row-head">
-        <h2 style="margin:0;">Transactions</h2>
-        <span class="link-green" onclick="openTxModalAdd()">+ Add</span>
-      </div>
-      <div class="hint">Edit/delete entries. Search filters by description/category/type.</div>
-      <div class="tx-list" id="allList"></div>
-    </div>
-  </section>
-
-  <section id="page-budget" class="page">
-    <div class="budget-header">
-      <h1 class="budget-title">Budget Dashboard</h1>
-      <button class="new-budget-btn" onclick="openBudgetModalAdd()">+ New Budget</button>
-    </div>
-
-    <div class="budget-summary-row">
-      <div class="budget-summary purple">
-        <h2 class="card-title">Total Budget</h2>
-        <p class="big-number" id="bud-total">$0</p>
-        <p class="small-text">Monthly allocation</p>
-      </div>
-
-      <div class="budget-summary pink">
-        <h2 class="card-title">Total Spent</h2>
-        <p class="big-number" id="bud-spent">$0</p>
-        <div class="progress-bar-white">
-          <div class="fill" id="bud-fill" style="width:0%"></div>
-        </div>
-        <p class="small-text" id="bud-pct">0%</p>
-      </div>
-
-      <div class="budget-summary green">
-        <h2 class="card-title">Remaining</h2>
-        <p class="big-number" id="bud-remain">$0</p>
-        <p class="small-text">Available to spend</p>
-      </div>
-    </div>
-
-    <h2 class="section-title">Your Budgets</h2>
-    <div class="budget-grid" id="budgetGrid"></div>
-
-    <div class="hint">
-      Budgets are editable. Spent amounts are calculated from your transactions (Expense type) by category.
-    </div>
-  </section>
-
-  <section id="page-reports" class="page">
-    <div class="card card-pad">
-      <h2 style="margin:0;">Reports</h2>
-      <p style="color:var(--muted); margin:8px 0 0;">Later: exports, monthly summaries, charts.</p>
-    </div>
-  </section>
-
+  <!-- =========================
+       TRANSACTION MODAL
+  ========================== -->
   <div class="modal" id="txModal" onclick="backdropClose(event, 'txModal')">
     <div class="modal-content" role="dialog" aria-modal="true">
       <div class="modal-top">
@@ -224,6 +460,9 @@
     </div>
   </div>
 
+  <!-- =========================
+       BUDGET MODAL
+  ========================== -->
   <div class="modal" id="budgetModal" onclick="backdropClose(event, 'budgetModal')">
     <div class="modal-content" role="dialog" aria-modal="true">
       <div class="modal-top">
@@ -248,6 +487,9 @@
     </div>
   </div>
 
+  <!-- =========================
+       EXTERNAL JAVASCRIPT FILE
+  ========================== -->
   <script src="script.js"></script>
 </body>
 </html>
