@@ -399,7 +399,9 @@ body{
 .text-link.inline{
   display:inline;
 }
-
+.hidden {
+  display: none !important;
+}
 .auth-btn{
   width:100%;
   background:var(--green);
