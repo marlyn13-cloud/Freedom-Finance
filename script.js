@@ -220,28 +220,44 @@ function openApp() {
   const authPage = document.getElementById("authPage");
   const appShell = document.getElementById("appShell");
   
-  if(authPage) authPage.classList.add("hidden");
-  if(appShell) appShell.classList.remove("hidden");
+  // Use inline styles to forcefully override any CSS conflicts
+  if(authPage) {
+    authPage.classList.add("hidden");
+    authPage.style.display = "none"; 
+  }
+  
+  if(appShell) {
+    appShell.classList.remove("hidden");
+    appShell.style.display = "block"; 
+  }
   
   showPage("dashboard");
 }
 
-function showPage(name) {
-  const pages = ["dashboard", "transactions", "budget", "reports"];
-  for (const p of pages) {
-    const page = document.getElementById("page-" + p);
-    const tab = document.getElementById("tab-" + p);
-    if (page) page.classList.toggle("active", p === name);
-    if (tab) tab.classList.toggle("active", p === name);
+/* =========================
+   UPDATED LOGIN FUNCTION
+========================= */
+async function handleLogin(e) {
+  if (e) e.preventDefault();
+  clearAuthMessages();
+  
+  const email = (document.getElementById("loginIdentifier").value || "").trim().toLowerCase();
+  const password = document.getElementById("loginPassword").value || "";
+
+  if (!email || !password) return showError("loginError", "Email and password required.");
+
+  // Attempt to sign in
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+  if (error) {
+    console.error("Supabase Login Error:", error.message);
+    return showError("loginError", error.message);
   }
-  window.scrollTo({ top: 0, behavior: "instant" });
-}
 
-function setSearch(v) {
-  searchTerm = (v || "").trim().toLowerCase();
-  renderAll();
+  // If successful, forcefully trigger the app opening!
+  openApp();
+  fetchAllData();
 }
-
 /* =========================
    MODAL HELPERS
 ========================= */
