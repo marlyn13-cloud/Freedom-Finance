@@ -1,3 +1,10 @@
+/* ===Supabase database ==*/
+const SUPABASE_URL = 'https://pcnlidstcodvitoacpej.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBjbmxpZHN0Y29kdml0b2FjcGVqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NTE2ODU0OCwiZXhwIjoyMDkwNzQ0NTQ4fQ.TDHlqEvJYYzc3wdY6f9bdPsx7rdsUDM9hcWjEVvJ6wQ';
+
+// Initialize the Supabase client
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 /* =========================
    STORAGE KEYS
 ========================= */
@@ -208,7 +215,18 @@ function handleForgotPassword() {
 
   showSuccess("forgotSuccess", "Password updated. You can sign in now.");
 }
+async function loadTransactionsFromDB() {
+  const { data, error } = await supabase
+    .from('transactions')
+    .select('*');
 
+  if (error) {
+    console.error('Error fetching transactions:', error);
+    return [];
+  }
+  
+  return data; 
+}
 /* =========================
    APP VISIBILITY
 ========================= */
