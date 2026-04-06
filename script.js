@@ -159,8 +159,10 @@ supabase.auth.onAuthStateChange((event, session) => {
   }
 });
 
-async function handleSignup() {
+async function handleSignup(e) {
+  if (e) e.preventDefault();
   clearAuthMessages();
+  
   const email = (document.getElementById("signupEmail").value || "").trim().toLowerCase();
   const password = document.getElementById("signupPassword").value || "";
   const confirmPassword = document.getElementById("signupConfirmPassword").value || "";
@@ -179,8 +181,10 @@ async function handleSignup() {
   setTimeout(() => showAuthView("login"), 2000);
 }
 
-async function handleLogin() {
+async function handleLogin(e) {
+  if (e) e.preventDefault();
   clearAuthMessages();
+  
   const email = (document.getElementById("loginIdentifier").value || "").trim().toLowerCase();
   const password = document.getElementById("loginPassword").value || "";
 
@@ -192,8 +196,10 @@ async function handleLogin() {
   // UI transition handled by onAuthStateChange
 }
 
-async function handleForgotPassword() {
+async function handleForgotPassword(e) {
+  if (e) e.preventDefault();
   clearAuthMessages();
+  
   const email = (document.getElementById("forgotEmail").value || "").trim().toLowerCase();
   if (!email || !isValidEmail(email)) return showError("forgotError", "Enter a valid email.");
 
