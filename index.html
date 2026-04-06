@@ -52,7 +52,7 @@
               </div>
             </div>
             
-            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -65,92 +65,90 @@
           <h2 class="auth-card-title">Welcome Back</h2>
           <p class="auth-card-subtitle">Sign in to continue to your account</p>
 
-          <div class="form-group">
-            <label for="loginIdentifier">Username or Email</label>
-            <input id="loginIdentifier" type="text" placeholder="Enter your username or email" />
-          </div>
+          <form onsubmit="handleLogin(event)">
+            <div class="form-group">
+              <label for="loginIdentifier">Email</label>
+              <input id="loginIdentifier" type="email" placeholder="Enter your email" required />
+            </div>
 
-          <div class="form-group">
-            <label for="loginPassword">Password</label>
-            <input id="loginPassword" type="password" placeholder="Enter your password" />
-          </div>
+            <div class="form-group">
+              <label for="loginPassword">Password</label>
+              <input id="loginPassword" type="password" placeholder="Enter your password" required />
+            </div>
 
-          <div class="auth-links-row">
-            <button class="text-link" type="button" onclick="showAuthView('forgot')">Forgot password?</button>
-          </div>
+            <div class="auth-links-row">
+              <button class="text-link" type="button" onclick="showAuthView('forgot')">Forgot password?</button>
+            </div>
 
-          <div class="error" id="loginError"></div>
+            <div class="error" id="loginError"></div>
 
-          <button class="auth-btn" type="button" onclick="handleLogin()">Sign In</button>
+            <button class="auth-btn" type="submit">Sign In</button>
 
-          <div class="switch-text">
-            Don't have an account?
-            <button class="text-link inline" type="button" onclick="showAuthView('signup')">Sign up</button>
-          </div>
+            <div class="switch-text">
+              Don't have an account?
+              <button class="text-link inline" type="button" onclick="showAuthView('signup')">Sign up</button>
+            </div>
+          </form>
         </div>
 
         <div id="view-signup" class="auth-view">
           <h2 class="auth-card-title">Create Account</h2>
           <p class="auth-card-subtitle">Set up your Freedom Finance account</p>
 
-          <div class="form-group">
-            <label for="signupUsername">Username</label>
-            <input id="signupUsername" type="text" placeholder="Choose a username" />
-          </div>
+          <form onsubmit="handleSignup(event)">
+            <div class="form-group">
+              <label for="signupUsername">Username</label>
+              <input id="signupUsername" type="text" placeholder="Choose a username" required />
+            </div>
 
-          <div class="form-group">
-            <label for="signupEmail">Email</label>
-            <input id="signupEmail" type="email" placeholder="Enter your email" />
-          </div>
+            <div class="form-group">
+              <label for="signupEmail">Email</label>
+              <input id="signupEmail" type="email" placeholder="Enter your email" required />
+            </div>
 
-          <div class="form-group">
-            <label for="signupPassword">Password</label>
-            <input id="signupPassword" type="password" placeholder="Create a password" />
-          </div>
+            <div class="form-group">
+              <label for="signupPassword">Password</label>
+              <input id="signupPassword" type="password" placeholder="Create a password" required />
+            </div>
 
-          <div class="form-group">
-            <label for="signupConfirmPassword">Confirm Password</label>
-            <input id="signupConfirmPassword" type="password" placeholder="Confirm your password" />
-          </div>
+            <div class="form-group">
+              <label for="signupConfirmPassword">Confirm Password</label>
+              <input id="signupConfirmPassword" type="password" placeholder="Confirm your password" required />
+            </div>
 
-          <div class="error" id="signupError"></div>
+            <div class="error" id="signupError"></div>
 
-          <button class="auth-btn" type="button" onclick="handleSignup()">Create Account</button>
+            <button class="auth-btn" type="submit">Create Account</button>
 
-          <div class="switch-text">
-            Already have an account?
-            <button class="text-link inline" type="button" onclick="showAuthView('login')">Sign in</button>
-          </div>
+            <div class="switch-text">
+              Already have an account?
+              <button class="text-link inline" type="button" onclick="showAuthView('login')">Sign in</button>
+            </div>
+          </form>
         </div>
 
         <div id="view-forgot" class="auth-view">
           <h2 class="auth-card-title">Forgot Password</h2>
           <p class="auth-card-subtitle">Enter your email and set a new password</p>
 
-          <div class="form-group">
-            <label for="forgotEmail">Email</label>
-            <input id="forgotEmail" type="email" placeholder="Enter your email" />
-          </div>
+          <form onsubmit="handleForgotPassword(event)">
+            <div class="form-group">
+              <label for="forgotEmail">Email</label>
+              <input id="forgotEmail" type="email" placeholder="Enter your email" required />
+            </div>
 
-          <div class="form-group">
-            <label for="forgotNewPassword">New Password</label>
-            <input id="forgotNewPassword" type="password" placeholder="Enter a new password" />
-          </div>
+            <div class="error" id="forgotError"></div>
+            <div class="success" id="forgotSuccess"></div>
 
-          <div class="error" id="forgotError"></div>
-          <div class="success" id="forgotSuccess"></div>
+            <button class="auth-btn" type="submit">Reset Password</button>
 
-          <button class="auth-btn" type="button" onclick="handleForgotPassword()">Reset Password</button>
-
-          <div class="switch-text">
-            Back to
-            <button class="text-link inline" type="button" onclick="showAuthView('login')">Sign in</button>
-          </div>
+            <div class="switch-text">
+              Back to
+              <button class="text-link inline" type="button" onclick="showAuthView('login')">Sign in</button>
+            </div>
+          </form>
         </div>
 
-        <div class="auth-note">
-          Demo front-end version. Your teammate can replace these functions with backend API calls later.
-        </div>
       </div>
     </div>
   </section>
