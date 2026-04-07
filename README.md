@@ -1,14 +1,16 @@
 ### MILESTONE 2 PLAN AND READINESS: 
 
-- USER LOGIN (MIKE & MARLYN)
+- USER LOGIN (MIKE )
 - IMPLEMENTATION OF TRANSACTION TAB (JUAN)
-- LINK TO OTHER TABS AND DEBUG (MARLYN)
+- LINK TO OTHER TABS/DEBUG/ features (MARLYN)
 
+ FEATURES : log out button, dashboard income feature, clear budgets button 
 
-marlyn To do list:
+### Milestone 3
 
-- make ai chatbot (Spark.ai)
-
+- make ai chatbot (Spark.ai) (marlyn)
+- reports tab
+- presentation prep/ proper documentation/ debug if necesarry
 
 https://marlyn13-cloud.github.io/Freedom-Finance/
 
