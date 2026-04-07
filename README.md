@@ -4,7 +4,7 @@
 - IMPLEMENTATION OF TRANSACTION TAB (JUAN)
 - LINK TO OTHER TABS/DEBUG/ features (MARLYN)
 
- FEATURES : log out button, dashboard income feature, clear budgets button 
+ FEATURES : (mike) log out button, (marlyn) dashboard income feature, (marlyn) clear budgets button 
 
 ### Milestone 3
 
