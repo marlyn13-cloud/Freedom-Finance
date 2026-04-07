@@ -1,8 +1,8 @@
 ### MILESTONE 2 PLAN AND READINESS: 
 
 - USER LOGIN (MIKE )
-- IMPLEMENTATION OF TRANSACTION TAB (JUAN)
-- LINK TO OTHER TABS/DEBUG/ features (MARLYN)
+- IMPLEMENTATION OF TRANSACTION TAB/ debug (JUAN)
+- LINK TO OTHER TABS/ features (MARLYN)
 
  FEATURES : (mike) log out button, (marlyn) dashboard income feature, (marlyn) clear budgets button 
 
