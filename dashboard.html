@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Freedom Finance - Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="navbar">
+    <div class="nav-left">
+      <div class="logo">Freedom Finance</div>
+      <div class="nav-links">
+        <button class="active" onclick="window.location.href='dashboard.html'">Dashboard</button>
+        <button onclick="window.location.href='transaction.html'">Transactions</button>
+        <button onclick="window.location.href='budget.html'">Budget</button>
+        <button onclick="window.location.href='reports.html'">Reports</button>
+      </div>
+    </div>
+    <div class="right-nav">
+      <button class="add-btn" onclick="openTxModalAdd()">+ Add Transaction</button>
+      <input class="search" aria-label="Search" placeholder="Search..." oninput="setSearch(this.value)" />
+      <button class="icon-btn" onclick="window.location.href='index.html'">Logout</button>
+    </div>
+  </div>
+
+  <section class="page active">
+    <div class="dash-grid">
+      <div>
+        <div class="card summary-card"><div class="summary-title">Total Balance</div><div class="summary-value" id="sum-balance">$0.00</div></div>
+        <div class="card summary-card"><div class="summary-title">Income</div><div class="summary-value" id="sum-income">$0.00</div></div>
+        <div class="card summary-card"><div class="summary-title">Expenses</div><div class="summary-value" id="sum-expenses">$0.00</div></div>
+        <div class="card summary-card"><div class="summary-title">Savings</div><div class="summary-value" id="sum-savings">$0.00</div></div>
+      </div>
+
+      <div class="dash-main">
+        <div class="card card-pad">
+          <div class="row-head">
+            <div>
+              <h3>Top 5 Spending Categories</h3>
+              <div class="text-muted-sm">Based on expenses by category</div>
+            </div>
+            <span class="link-green" onclick="window.location.href='budget.html'">Budget</span>
+          </div>
+          <div class="chart-wrap" id="chartWrap"></div>
+        </div>
+
+        <div class="card card-pad">
+          <div class="row-head">
+            <h3>Recent Transactions</h3>
+            <span class="link-green" onclick="window.location.href='transaction.html'">View All</span>
+          </div>
+          <div class="tx-list" id="recentList"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="modal" id="txModal" onclick="backdropClose(event, 'txModal')">
+    <div class="modal-content" role="dialog" aria-modal="true">
+      <div class="modal-top">
+        <h3 id="txModalTitle">Add Transaction</h3>
+        <button class="close-x" onclick="closeModal('txModal')" aria-label="Close">✕</button>
+      </div>
+      
+      <div class="grid2">
+        <div>
+          <label for="txType">Type</label>
+          <select id="txType">
+            <option value="income">Income (Paycheck)</option>
+            <option value="expense" selected>Expense</option>
+            <option value="savings">Savings</option>
+            <option value="investment">Investment</option>
+          </select>
+        </div>
+        <div>
+          <label for="txDate">Date</label>
+          <input id="txDate" type="date" />
+        </div>
+      </div>
+      
+      <label for="txDesc">Description</label>
+      <input id="txDesc" placeholder="e.g., Groceries" />
+      
+      <div class="grid2">
+        <div>
+          <label for="txAmount">Amount (positive)</label>
+          <input id="txAmount" type="number" step="0.01" />
+        </div>
+        <div>
+          <label for="txCategory">Category</label>
+          <select id="txCategory" onchange="onTxCategoryChange()"></select>
+          <input id="txNewCategory" class="hidden" aria-label="New category name" placeholder="New category name..." />
+        </div>
+      </div>
+      
+      <div class="error" id="txError"></div>
+      
+      <div class="actions">
+        <button class="btn secondary" onclick="closeModal('txModal')">Cancel</button>
+        <button class="btn primary" id="txSaveBtn" onclick="saveTransaction()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
