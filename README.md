@@ -2,7 +2,7 @@
 
 - USER LOGIN (MIKE )
 - IMPLEMENTATION OF TRANSACTION TAB/ debug (JUAN)
-- LINK TO OTHER TABS/ features (MARLYN)
+- LINK TO OTHER TABS/ debug/ features (MARLYN)
 
  FEATURES : (mike) log out button, (marlyn) dashboard income feature, (marlyn) clear budgets button 
 
