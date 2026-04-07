@@ -1,18 +1,11 @@
 ### MILESTONE 2 PLAN AND READINESS: 
 
 - USER LOGIN (MIKE & MARLYN)
-- FORGET PASSWORD/EMAIL/USERNAME (MARLYN)
-- DATABASE FOR EACH LOGIN (MIKE & JUAN)
 - IMPLEMENTATION OF TRANSACTION TAB (JUAN)
 - LINK TO OTHER TABS AND DEBUG (MARLYN)
 
-https://supabase.com/
 
 marlyn To do list:
-
-AFTER MIKE ADDS FUNCTIONALITIES OF USER LOGIN PAGE:
-
--merge sql database to supabase and set up github action so supabase never pauses.
 
 - make ai chatbot (Spark.ai)
 
