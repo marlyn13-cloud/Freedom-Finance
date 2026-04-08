@@ -47,5 +47,3 @@ Budget Tracking & "Overbudget" Detection: * Checks specific budget limits agains
 Example: "Am I overbudget for food?"
 
 Transaction Search: * Uses fuzzy semantic search to find specific logged transactions and returns the date, description, and exact amount.
-
-Example: "Search for the groceries transaction."
