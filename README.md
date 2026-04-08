@@ -64,7 +64,11 @@ The Freedom Finance Dashboard provides a simple and efficient interface for mana
 
 ```
 freedom-finance/
-├── index.html      # Application structure and layout
+├── index.html      # Application structure and log in
+├── dashboard.html   # Dashboard overview Tab file
+├── transaction.html # Transaction Tab File
+├── budget.html      # Budget Tab File
+├── reports.html    # Reports Tab File
 ├── style.css       # Styling and visual design
 ├── script.js       # Application logic and state management
 └── README.md       # Project documentation
@@ -107,8 +111,6 @@ https://yourusername.github.io/freedom-finance/
 
 ## Future Enhancements
 
-- Backend integration for persistent storage
-- User authentication system and login page
 - Export functionality (CSV/PDF reports)  
 - AI assistant bot 
 - Advanced analytics and reporting features  
