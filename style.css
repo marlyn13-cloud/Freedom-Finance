@@ -97,6 +97,9 @@ body {
 /* =========================
    PREVIEW
 ========================= */
+/* =========================
+   PREVIEW
+========================= */
 .preview-shell {
   background: #fff;
   border: 1px solid var(--border);
@@ -594,7 +597,7 @@ body {
 ========================= */
 .dash-grid {
   display: grid;
-  grid-template-columns: 320px 1fr;
+  grid-template-columns: 1fr 320px;
   gap: 20px;
   align-items: start;
 }
