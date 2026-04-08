@@ -3,7 +3,7 @@
 ========================= */
 :root {
   --bg: #15bb9f;
-  --nav: #15bb9f;
+  --nav: #3ba08f;
   --green: #0a584b;
   --green-dark: #08463b;
   --green-soft: #9efdc6;
@@ -1232,3 +1232,213 @@ body {
   color: var(--muted);
   margin: 8px 0 0;
 }
+
+/* =========================
+   Spark CHATBOT
+   ========================= */
+  
+#spark-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--green);
+  color: #fff;
+  border: none;
+  font-size: 24px;
+  box-shadow: 0 8px 20px rgba(10, 88, 75, 0.4);
+  cursor: pointer;
+  z-index: 100;
+  transition: transform 0.2s ease;
+}
+
+#spark-fab:hover {
+  transform: scale(1.08);
+}
+
+#spark-chat-window {
+  position: fixed;
+  bottom: 96px;
+  right: 24px;
+  width: 350px;
+  height: 500px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  overflow: hidden;
+}
+
+#spark-chat-window.hidden {
+  display: none !important;
+}
+
+.chat-header {
+  background: var(--nav);
+  color: #fff;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.close-chat {
+  background: transparent;
+  border: none;
+  color: #eef2f7;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.close-chat:hover {
+  color: #fff;
+}
+
+.chat-body {
+  flex: 1;
+  padding: 16px;
+  background: #f8fafc;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-msg {
+  margin-bottom: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.4;
+  max-width: 85%;
+  word-wrap: break-word;
+}
+
+.chat-msg.bot {
+  background: #7bc59f;
+  border: 1px solid #000000;
+  color: var(--ink);
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+}
+
+.chat-input {
+  display: flex;
+  padding: 14px;
+  background: var(--green-soft);
+  border-top: 1px solid #000000;
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #3f3f3f;
+  border-radius: 8px;
+  outline: none;
+  font-size: 14px;
+}
+
+.chat-input input:focus {
+  border-color: var(--green-soft);
+}
+
+.chat-input button {
+  background: var(--green);
+  color: #fff;
+  border: none;
+  padding: 0 16px;
+  margin-left: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.chat-input button:disabled {
+  background: #cbd5e1;
+  cursor: not-allowed;
+}
+
+/*=========================================
+    animations
+ =========================================*/
+   
+
+/* 1. Keyframe */
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideInMsg {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* 2. Page & Modal Loading */
+.page.active {
+  animation: fadeSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.modal-content {
+  animation: fadeInScale 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* 3. Cards & Hover */
+.card, .budget-card, .summary-card, .budget-summary {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card:hover, .budget-card:hover, .summary-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 28px rgba(0,0,0,0.12);
+}
+
+/* 4.  Buttons (Smooth color transitions and a 'click' press effect) */
+button, .btn, .icon-btn, .mini-btn, .auth-btn, .add-btn, .new-budget-btn {
+  transition: all 0.2s ease;
+}
+
+button:active, .btn:active, .icon-btn:active, .add-btn:active, .new-budget-btn:active {
+  transform: scale(0.96);
+}
+
+/* 5. Animated Budget Progress Bars */
+.bar-fill2, .progress-bar-white .fill {
+  transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* 6. Spark AI Chatbot  */
+#spark-chat-window {
+  transform-origin: bottom right; 
+}
+
+#spark-chat-window:not(.hidden) {
+  animation: fadeInScale 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Chat messages gently slide into place when generated */
+.chat-msg {
+  animation: slideInMsg 0.3s ease forwards;
+}
+
+/* 7. Creates a load effect */
+.tx-item {
+  animation: fadeSlideUp 0.3s ease forwards;
+  animation-fill-mode: both;
+}
+.tx-item:nth-child(1) { animation-delay: 0.05s; }
+.tx-item:nth-child(2) { animation-delay: 0.1s; }
+.tx-item:nth-child(3) { animation-delay: 0.15s; }
+.tx-item:nth-child(4) { animation-delay: 0.2s; }
+.tx-item:nth-child(5) { animation-delay: 0.25s; }
