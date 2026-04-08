@@ -8,7 +8,7 @@
 
 ### Milestone 3
 
-- make ai chatbot (Spark.ai) (marlyn)
+- make ai chatbot (Spark.ai) (marlyn) (DONE)
 - reports tab
 - presentation prep/ proper documentation/ debug if necesarry
 
