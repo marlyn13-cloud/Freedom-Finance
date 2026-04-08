@@ -2,6 +2,8 @@
 const TX_KEY  = "ff_transactions_v1";
 const BUD_KEY = "ff_budgets_v1";
 const CAT_KEY = "ff_categories_v1";
+const USER_KEY = "ff_users_v1";
+const SESSION_KEY = "ff_current_user_v1";
 
 // ===== App State =====
 let searchTerm = "";
@@ -10,10 +12,13 @@ let editingBudId = null;
 
 // ===== Helpers =====
 function uid(){ return Math.random().toString(16).slice(2) + Date.now().toString(16); }
-function money(n){ return n.toLocaleString(undefined, {style:"currency", currency:"USD"}); }
+function money(n){ return Number(n).toLocaleString(undefined, {style:"currency", currency:"USD"}); }
 function escapeHtml(str){
   return String(str).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
     .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+}
+function isValidEmail(email){
+  return /\S+@\S+\.\S+/.test(email);
 }
 
 function setSearch(v){
@@ -21,10 +26,151 @@ function setSearch(v){
   renderAll();
 }
 
-function openModal(id){ document.getElementById(id).style.display = "flex"; }
-function closeModal(id){ document.getElementById(id).style.display = "none"; }
+function openModal(id){
+  const el = document.getElementById(id);
+  if(el) el.style.display = "flex";
+}
+function closeModal(id){
+  const el = document.getElementById(id);
+  if(el) el.style.display = "none";
+}
 function backdropClose(e, id){ if(e.target.id === id) closeModal(id); }
-document.addEventListener("keydown", (e) => { if(e.key === "Escape"){ closeModal("txModal"); closeModal("budgetModal"); } });
+
+document.addEventListener("keydown", (e) => {
+  if(e.key === "Escape"){
+    closeModal("txModal");
+    closeModal("budgetModal");
+  }
+});
+
+// ===== Auth Storage =====
+function loadUsers(){
+  try { return JSON.parse(localStorage.getItem(USER_KEY)) || []; }
+  catch { return []; }
+}
+function saveUsers(users){ localStorage.setItem(USER_KEY, JSON.stringify(users)); }
+
+function setCurrentUser(user){ localStorage.setItem(SESSION_KEY, JSON.stringify(user)); }
+
+function getCurrentUser(){
+  try { return JSON.parse(localStorage.getItem(SESSION_KEY)); }
+  catch { return null; }
+}
+
+function clearCurrentUser(){ localStorage.removeItem(SESSION_KEY); }
+
+// ===== Auth UI =====
+function clearAuthMessages(){
+  const ids = ["loginError", "signupError"];
+  for(const id of ids){
+    const el = document.getElementById(id);
+    if(el){
+      el.style.display = "none";
+      el.textContent = "";
+    }
+  }
+}
+
+function showAuthError(id, msg){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.style.display = "block";
+  el.textContent = msg;
+}
+
+function showAuthView(name){
+  clearAuthMessages();
+  const loginView = document.getElementById("view-login");
+  const signupView = document.getElementById("view-signup");
+
+  if(loginView) loginView.classList.remove("active");
+  if(signupView) signupView.classList.remove("active");
+
+  const activeView = document.getElementById(`view-${name}`);
+  if(activeView) activeView.classList.add("active");
+}
+
+function handleSignup(){
+  clearAuthMessages();
+
+  const username = (document.getElementById("signupUsername")?.value || "").trim();
+  const email = (document.getElementById("signupEmail")?.value || "").trim().toLowerCase();
+  const password = document.getElementById("signupPassword")?.value || "";
+  const confirmPassword = document.getElementById("signupConfirmPassword")?.value || "";
+
+  if(!username) return showAuthError("signupError", "Enter a username.");
+  if(!email) return showAuthError("signupError", "Enter an email.");
+  if(!isValidEmail(email)) return showAuthError("signupError", "Enter a valid email.");
+  if(!password) return showAuthError("signupError", "Enter a password.");
+  if(password.length < 6) return showAuthError("signupError", "Password must be at least 6 characters.");
+  if(password !== confirmPassword) return showAuthError("signupError", "Passwords do not match.");
+
+  const users = loadUsers();
+
+  const usernameExists = users.some(u => u.username.toLowerCase() === username.toLowerCase());
+  if(usernameExists) return showAuthError("signupError", "That username already exists.");
+
+  const emailExists = users.some(u => u.email.toLowerCase() === email.toLowerCase());
+  if(emailExists) return showAuthError("signupError", "That email is already registered.");
+
+  users.push({
+    id: uid(),
+    username,
+    email,
+    password
+  });
+
+  saveUsers(users);
+
+  const loginIdentifier = document.getElementById("loginIdentifier");
+  const loginPassword = document.getElementById("loginPassword");
+
+  if(loginIdentifier) loginIdentifier.value = email;
+  if(loginPassword) loginPassword.value = "";
+
+  showAuthView("login");
+}
+
+function handleLogin(){
+  clearAuthMessages();
+
+  const identifier = (document.getElementById("loginIdentifier")?.value || "").trim().toLowerCase();
+  const password = document.getElementById("loginPassword")?.value || "";
+
+  if(!identifier) return showAuthError("loginError", "Enter your username or email.");
+  if(!password) return showAuthError("loginError", "Enter your password.");
+
+  const users = loadUsers();
+  const user = users.find(u =>
+    u.email.toLowerCase() === identifier || u.username.toLowerCase() === identifier
+  );
+
+  if(!user) return showAuthError("loginError", "Account not found.");
+  if(user.password !== password) return showAuthError("loginError", "Incorrect password.");
+
+  setCurrentUser({
+    id: user.id,
+    username: user.username,
+    email: user.email
+  });
+
+  window.location.href = "dashboard.html";
+}
+
+function logoutUser(){
+  clearCurrentUser();
+  window.location.href = "index.html";
+}
+
+function requireAuth(){
+  const authPage = document.getElementById("authPage");
+  if(authPage) return; // Don't redirect when already on login page
+
+  const currentUser = getCurrentUser();
+  if(!currentUser){
+    window.location.href = "index.html";
+  }
+}
 
 // ===== Data Load/Save =====
 function loadTx(){ try { return JSON.parse(localStorage.getItem(TX_KEY)) || []; } catch { return []; } }
@@ -33,11 +179,9 @@ function saveTx(txs){ localStorage.setItem(TX_KEY, JSON.stringify(txs)); }
 function loadBudgets(){
   try {
     const b = JSON.parse(localStorage.getItem(BUD_KEY));
-    // it will return the empty array instead of generating the default data
     if(Array.isArray(b)) return b;
   } catch {}
-  
-  // This data will now ONLY load the very first time someone opens the app
+
   const seed = [
     {id: uid(), category:"Food", limit:200},
     {id: uid(), category:"Entertainment", limit:100},
@@ -99,8 +243,14 @@ function expenseByCategory(txs){
 }
 
 // ===== Transactions UI =====
-function clearTxError(){ const b=document.getElementById("txError"); if(b){b.style.display="none"; b.textContent="";} }
-function txError(msg){ const b=document.getElementById("txError"); if(b){b.style.display="block"; b.textContent=msg;} }
+function clearTxError(){
+  const b=document.getElementById("txError");
+  if(b){b.style.display="none"; b.textContent="";}
+}
+function txError(msg){
+  const b=document.getElementById("txError");
+  if(b){b.style.display="block"; b.textContent=msg;}
+}
 
 function populateTxCategoryDropdown(selected){
   const sel = document.getElementById("txCategory");
@@ -122,9 +272,10 @@ function populateTxCategoryDropdown(selected){
 }
 
 function onTxCategoryChange(){
-  const v = document.getElementById("txCategory").value;
+  const sel = document.getElementById("txCategory");
   const input = document.getElementById("txNewCategory");
-  if(!input) return;
+  if(!sel || !input) return;
+  const v = sel.value;
   if(v === "__new__"){ input.classList.remove("hidden"); input.value=""; input.focus(); }
   else { input.classList.add("hidden"); input.value=""; }
 }
@@ -241,8 +392,14 @@ function filteredTransactions(txs){
 }
 
 // ===== Budget UI =====
-function clearBudError(){ const b=document.getElementById("budError"); if(b){b.style.display="none"; b.textContent="";} }
-function budError(msg){ const b=document.getElementById("budError"); if(b){b.style.display="block"; b.textContent=msg;} }
+function clearBudError(){
+  const b=document.getElementById("budError");
+  if(b){b.style.display="none"; b.textContent="";}
+}
+function budError(msg){
+  const b=document.getElementById("budError");
+  if(b){b.style.display="block"; b.textContent=msg;}
+}
 
 function openBudgetModalAdd(){
   editingBudId = null;
@@ -301,10 +458,9 @@ function saveBudget(){
 }
 
 function clearAllBudgets() {
-  // Ask for confirmation before deleting everything
   if (confirm("Are you sure you want to clear ALL your planned budgets? This cannot be undone.")) {
-    saveBudgets([]); 
-    renderAll();    
+    saveBudgets([]);
+    renderAll();
   }
 }
 
@@ -315,7 +471,7 @@ function deleteBudget(id){
 }
 
 function budgetStatus(spent, limit){
-  if(limit <= 0) return {label:"On Track", cls:"good"}; 
+  if(limit <= 0) return {label:"On Track", cls:"good"};
   const pct = spent / limit;
   if(pct >= 1) return {label:"Over Budget", cls:"bad"};
   if(pct >= 0.9) return {label:"Almost There", cls:"warn"};
@@ -334,8 +490,8 @@ function renderSummary(){
 
 function renderChart(){
   const wrap = document.getElementById("chartWrap");
-  if(!wrap) return; // Exit if not on dashboard page
-  
+  if(!wrap) return;
+
   const txs = loadTx();
   const map = expenseByCategory(txs);
   const rows = Array.from(map.entries()).sort((a,b)=>b[1]-a[1]).slice(0,5);
@@ -383,7 +539,7 @@ function renderChart(){
 function renderRecent(){
   const wrap = document.getElementById("recentList");
   if(!wrap) return;
-  
+
   const txs = loadTx().slice().sort((a,b)=>(b.date||"").localeCompare(a.date||""));
   const recent = txs.slice(0,6);
   wrap.innerHTML = "";
@@ -397,7 +553,7 @@ function renderRecent(){
 function renderAllTransactions(){
   const wrap = document.getElementById("allList");
   if(!wrap) return;
-  
+
   const txs = loadTx().slice().sort((a,b)=>(b.date||"").localeCompare(a.date||""));
   const list = filteredTransactions(txs);
   wrap.innerHTML = "";
@@ -410,47 +566,35 @@ function renderAllTransactions(){
 
 function renderBudgets(){
   const grid = document.getElementById("budgetGrid");
-  if(!grid) return; // Exit if not on budget page
-  
+  if(!grid) return;
+
   const txs = loadTx();
   const buds = loadBudgets();
   const spentMap = expenseByCategory(txs);
 
-  // Getz the exact Income and Expenses from the Dashboard logic
   const { income, expenses } = computeTotals(txs);
 
-  // Calculate total budget limits
   const totalBudget = buds.reduce((s,b)=>s + Number(b.limit||0), 0);
-  
-  // Make "Total Spent" match the Dashboard Expenses 
-  const totalSpent = expenses; 
-  
+  const totalSpent = expenses;
   const remaining = totalBudget - totalSpent;
   const pct = totalBudget > 0 ? Math.min(100, Math.round((totalSpent/totalBudget)*100)) : 0;
 
-  // Update the summary cards
   if(document.getElementById("bud-total")) document.getElementById("bud-total").textContent  = money(totalBudget);
   if(document.getElementById("bud-spent")) document.getElementById("bud-spent").textContent  = money(totalSpent);
   if(document.getElementById("bud-remain")) document.getElementById("bud-remain").textContent = money(remaining);
   if(document.getElementById("bud-fill")) document.getElementById("bud-fill").style.width = pct + "%";
   if(document.getElementById("bud-pct")) document.getElementById("bud-pct").textContent = pct + "%";
 
-  //Update the Insight Banner to show the math
   if(document.getElementById("insight-income")) document.getElementById("insight-income").textContent = money(income);
   if(document.getElementById("insight-leftover")) {
     const leftover = income - totalBudget;
     const leftoverEl = document.getElementById("insight-leftover");
     leftoverEl.textContent = money(leftover);
-    
-    // Turn red if they budgeted more money than they actually have
-    if (leftover < 0) {
-      leftoverEl.style.color = "var(--bad)";
-    } else {
-      leftoverEl.style.color = "var(--good)";
-    }
+
+    if (leftover < 0) leftoverEl.style.color = "var(--bad)";
+    else leftoverEl.style.color = "var(--good)";
   }
 
-  // Render the individual budget cards below
   grid.innerHTML = "";
   if(buds.length === 0){
     grid.innerHTML = `<div class="chart-empty">No budgets. Click <b>+ New Budget</b> to add one.</div>`;
@@ -501,7 +645,8 @@ function renderAll(){
 
 // ===== Init =====
 (function init(){
-  loadBudgets(); 
+  requireAuth();
+  loadBudgets();
   loadCategories();
   renderAll();
 })();
