@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Freedom Finance - Budget</title>
   <link rel="stylesheet" href="style.css" />
+  <script src="https://unpkg.com/rivescript@latest/dist/rivescript.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/currency.js/2.0.4/currency.min.js"></script>
 </head>
 <body>
   <div class="navbar">
@@ -20,27 +23,27 @@
     <div class="right-nav">
       <button class="add-btn" onclick="openTxModalAdd()">+ Add Transaction</button>
       <input class="search" aria-label="Search" placeholder="Search..." oninput="setSearch(this.value)" />
-      <button class="icon-btn" onclick="window.location.href='index.html'">Logout</button>
+      <button class="icon-btn" onclick="logout()">Logout</button>
     </div>
   </div>
 
   <section class="page active">
     <div class="budget-header">
       <h1 class="budget-title">Budget Dashboard</h1>
-      <div style="display: flex; gap: 12px; align-items: center;">
+      <div style="display:flex;gap:12px;align-items:center;">
         <button class="clear-budget-btn" onclick="clearAllBudgets()">Clear Budgets</button>
         <button class="new-budget-btn" onclick="openBudgetModalAdd()">+ New Budget</button>
       </div>
     </div>
 
-    <div class="card card-pad" style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--green);">
+    <div class="card card-pad" style="margin-bottom:24px;display:flex;justify-content:space-between;align-items:center;border-left:4px solid var(--green);">
       <div>
-        <div style="font-size: 13px; color: var(--muted); font-weight: bold;">TOTAL DASHBOARD INCOME</div>
-        <div id="insight-income" style="font-size: 20px; font-weight: bold; color: var(--ink);">$0.00</div>
+        <div style="font-size:13px;color:var(--muted);font-weight:bold;">TOTAL DASHBOARD INCOME</div>
+        <div id="insight-income" style="font-size:20px;font-weight:bold;color:var(--ink);">$0.00</div>
       </div>
-      <div style="text-align: right;">
-        <div style="font-size: 13px; color: var(--muted); font-weight: bold;">UNBUDGETED FUNDS</div>
-        <div id="insight-leftover" style="font-size: 20px; font-weight: bold;">$0.00</div>
+      <div style="text-align:right;">
+        <div style="font-size:13px;color:var(--muted);font-weight:bold;">UNBUDGETED FUNDS</div>
+        <div id="insight-leftover" style="font-size:20px;font-weight:bold;">$0.00</div>
       </div>
     </div>
 
@@ -67,21 +70,18 @@
     <div class="budget-grid" id="budgetGrid"></div>
   </section>
 
-  <div class="modal" id="budgetModal" onclick="backdropClose(event, 'budgetModal')">
+  <!-- New / Edit Budget Modal -->
+  <div class="modal" id="budgetModal" onclick="backdropClose(event,'budgetModal')">
     <div class="modal-content" role="dialog" aria-modal="true">
       <div class="modal-top">
         <h3 id="budgetModalTitle">New Budget</h3>
         <button class="close-x" onclick="closeModal('budgetModal')" aria-label="Close">✕</button>
       </div>
-      
       <label for="budCategory">Category</label>
       <input id="budCategory" placeholder="e.g., Food" />
-      
       <label for="budLimit">Monthly Limit (USD)</label>
       <input id="budLimit" type="number" step="0.01" />
-      
       <div class="error" id="budError"></div>
-      
       <div class="actions">
         <button class="btn secondary" onclick="closeModal('budgetModal')">Cancel</button>
         <button class="btn primary" id="budSaveBtn" onclick="saveBudget()">Save</button>
@@ -89,13 +89,13 @@
     </div>
   </div>
 
-  <div class="modal" id="txModal" onclick="backdropClose(event, 'txModal')">
+  <!-- Add / Edit Transaction Modal -->
+  <div class="modal" id="txModal" onclick="backdropClose(event,'txModal')">
     <div class="modal-content" role="dialog" aria-modal="true">
       <div class="modal-top">
         <h3 id="txModalTitle">Add Transaction</h3>
         <button class="close-x" onclick="closeModal('txModal')" aria-label="Close">✕</button>
       </div>
-      
       <div class="grid2">
         <div>
           <label for="txType">Type</label>
@@ -111,10 +111,8 @@
           <input id="txDate" type="date" />
         </div>
       </div>
-      
       <label for="txDesc">Description</label>
       <input id="txDesc" placeholder="e.g., Groceries" />
-      
       <div class="grid2">
         <div>
           <label for="txAmount">Amount (positive)</label>
@@ -126,13 +124,27 @@
           <input id="txNewCategory" class="hidden" aria-label="New category name" placeholder="New category name..." />
         </div>
       </div>
-      
       <div class="error" id="txError"></div>
-      
       <div class="actions">
         <button class="btn secondary" onclick="closeModal('txModal')">Cancel</button>
         <button class="btn primary" id="txSaveBtn" onclick="saveTransaction()">Save</button>
       </div>
+    </div>
+  </div>
+
+  <!-- Spark AI -->
+  <button id="spark-fab" onclick="toggleChat()">✨</button>
+  <div id="spark-chat-window" class="hidden">
+    <div class="chat-header">
+      <span>✨ Spark AI</span>
+      <button class="close-chat" onclick="toggleChat()">✕</button>
+    </div>
+    <div class="chat-body" id="spark-chat-body">
+      <div class="chat-msg bot">Hi! I'm Spark ✨ — Type to get started!</div>
+    </div>
+    <div class="chat-input">
+      <input type="text" id="spark-input" placeholder="Type a message..." disabled />
+      <button id="spark-send-btn" onclick="handleSparkSend()" disabled>Send</button>
     </div>
   </div>
 
