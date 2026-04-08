@@ -89,7 +89,7 @@ function showAuthView(name){
   const activeView = document.getElementById(`view-${name}`);
   if(activeView) activeView.classList.add("active");
 }
-
+//==Sign up feature==
 function handleSignup(){
   clearAuthMessages();
 
@@ -130,7 +130,7 @@ function handleSignup(){
 
   showAuthView("login");
 }
-
+//login sample database(web storage)
 function handleLogin(){
   clearAuthMessages();
 
@@ -157,7 +157,8 @@ function handleLogin(){
   window.location.href = "dashboard.html";
 }
 
-function logoutUser(){
+//logout function
+window.logoutUser = function() {
   clearCurrentUser();
   window.location.href = "index.html";
 }
@@ -172,196 +173,178 @@ function requireAuth(){
   }
 }
 
-// ===== Data Load/Save =====
-function loadTx(){ try { return JSON.parse(localStorage.getItem(TX_KEY)) || []; } catch { return []; } }
+/* =========================================
+   3. DATA LOAD / SAVE
+   ========================================= */
+function loadTx()   { try { return JSON.parse(localStorage.getItem(TX_KEY))  || []; } catch { return []; } }
 function saveTx(txs){ localStorage.setItem(TX_KEY, JSON.stringify(txs)); }
 
-function loadBudgets(){
+function loadBudgets() {
   try {
     const b = JSON.parse(localStorage.getItem(BUD_KEY));
-    if(Array.isArray(b)) return b;
-  } catch {}
-
+    if (Array.isArray(b)) return b;
+  } catch { /**/ }
   const seed = [
-    {id: uid(), category:"Food", limit:200},
-    {id: uid(), category:"Entertainment", limit:100},
-    {id: uid(), category:"Transport", limit:150},
-    {id: uid(), category:"Utilities", limit:120},
-    {id: uid(), category:"Shopping", limit:180},
-    {id: uid(), category:"Dining Out", limit:160},
+    { id: uid(), category: "Food",          limit: 200 },
+    { id: uid(), category: "Entertainment", limit: 100 },
+    { id: uid(), category: "Transport",     limit: 150 },
+    { id: uid(), category: "Utilities",     limit: 120 },
+    { id: uid(), category: "Shopping",      limit: 180 },
+    { id: uid(), category: "Dining Out",    limit: 160 },
   ];
   localStorage.setItem(BUD_KEY, JSON.stringify(seed));
   return seed;
 }
+function saveBudgets(buds) { localStorage.setItem(BUD_KEY, JSON.stringify(buds)); }
 
-function saveBudgets(buds){ localStorage.setItem(BUD_KEY, JSON.stringify(buds)); }
-
-function loadCategories(){
-  try{
+function loadCategories() {
+  try {
     const c = JSON.parse(localStorage.getItem(CAT_KEY));
-    if(Array.isArray(c) && c.length) return c;
-  }catch{}
-  const defaults = ["Other","Salary"];
+    if (Array.isArray(c) && c.length) return c;
+  } catch { /**/ }
+  const defaults = ["Other", "Salary"];
   localStorage.setItem(CAT_KEY, JSON.stringify(defaults));
   return defaults;
 }
-function saveCategories(cats){ localStorage.setItem(CAT_KEY, JSON.stringify(cats)); }
+function saveCategories(cats) { localStorage.setItem(CAT_KEY, JSON.stringify(cats)); }
 
-function getAllCategoryOptions(){
+function getAllCategoryOptions() {
   const set = new Map();
-  for(const c of loadCategories()) set.set(c.toLowerCase(), c);
-  for(const b of loadBudgets()) set.set(String(b.category).toLowerCase(), b.category);
-  for(const t of loadTx()){
-    if(t.category) set.set(String(t.category).toLowerCase(), t.category);
-  }
-  return Array.from(set.values()).sort((a,b)=>a.localeCompare(b));
+  for (const c of loadCategories()) set.set(c.toLowerCase(), c);
+  for (const b of loadBudgets())    set.set(String(b.category).toLowerCase(), b.category);
+  for (const t of loadTx())         if (t.category) set.set(String(t.category).toLowerCase(), t.category);
+  return Array.from(set.values()).sort((a, b) => a.localeCompare(b));
 }
 
-// ===== Calculations =====
-function computeTotals(txs){
+/* =========================================
+   4. CALCULATIONS
+   ========================================= */
+function computeTotals(txs) {
   let income = 0, expenses = 0, savings = 0, investment = 0;
-  for(const t of txs){
+  for (const t of txs) {
     const amt = Number(t.amount || 0);
-    if(t.type === "income") income += amt;
-    if(t.type === "expense") expenses += Math.abs(amt);
-    if(t.type === "savings") savings += amt;
-    if(t.type === "investment") investment += amt;
+    if (t.type === "income")     income     += amt;
+    if (t.type === "expense")    expenses   += Math.abs(amt);
+    if (t.type === "savings")    savings    += amt;
+    if (t.type === "investment") investment += amt;
   }
-  const balance = income - expenses + savings + investment;
-  return { income, expenses, savings, investment, balance };
+  return { income, expenses, savings, investment, balance: income - expenses + savings + investment };
 }
 
-function expenseByCategory(txs){
+function expenseByCategory(txs) {
   const m = new Map();
-  for(const t of txs){
-    if(t.type !== "expense") continue;
+  for (const t of txs) {
+    if (t.type !== "expense") continue;
     const cat = t.category || "Other";
-    const amt = Math.abs(Number(t.amount || 0));
-    m.set(cat, (m.get(cat) || 0) + amt);
+    m.set(cat, (m.get(cat) || 0) + Math.abs(Number(t.amount || 0)));
   }
   return m;
 }
 
-// ===== Transactions UI =====
-function clearTxError(){
-  const b=document.getElementById("txError");
-  if(b){b.style.display="none"; b.textContent="";}
-}
-function txError(msg){
-  const b=document.getElementById("txError");
-  if(b){b.style.display="block"; b.textContent=msg;}
-}
+//* =========================================
+// 5. TRANSACTION UI
+// ========================================= *//
+function clearTxError() { const b = document.getElementById("txError"); if (b) { b.style.display = "none"; b.textContent = ""; } }
+function   txError(msg) { const b = document.getElementById("txError"); if (b) { b.style.display = "block"; b.textContent = msg; } }
 
-function populateTxCategoryDropdown(selected){
+function populateTxCategoryDropdown(selected) {
   const sel = document.getElementById("txCategory");
-  if(!sel) return;
+  if (!sel) return;
   const cats = getAllCategoryOptions();
   sel.innerHTML = "";
-
-  for(const c of cats){
+  for (const c of cats) {
     const opt = document.createElement("option");
     opt.value = c; opt.textContent = c;
     sel.appendChild(opt);
   }
   const optNew = document.createElement("option");
-  optNew.value="__new__"; optNew.textContent="+ New category...";
+  optNew.value = "__new__"; optNew.textContent = "+ New category...";
   sel.appendChild(optNew);
-
   sel.value = (selected && cats.includes(selected)) ? selected : (cats[0] || "Other");
-  onTxCategoryChange();
+  window.onTxCategoryChange();
 }
 
-function onTxCategoryChange(){
-  const sel = document.getElementById("txCategory");
+window.onTxCategoryChange = function () {
+  const sel   = document.getElementById("txCategory");
   const input = document.getElementById("txNewCategory");
-  if(!sel || !input) return;
-  const v = sel.value;
-  if(v === "__new__"){ input.classList.remove("hidden"); input.value=""; input.focus(); }
-  else { input.classList.add("hidden"); input.value=""; }
-}
-
-function openTxModalAdd(){
+  if (!sel || !input) return;
+  if (sel.value === "__new__") { input.classList.remove("hidden"); input.value = ""; input.focus(); }
+  else                         { input.classList.add("hidden");    input.value = ""; }
+};
+//==Open transaction modal for adding,editing,deleting transactions==
+window.openTxModalAdd = function () {
   editingTxId = null;
   clearTxError();
   document.getElementById("txModalTitle").textContent = "Add Transaction";
-  document.getElementById("txSaveBtn").textContent = "Save";
-  document.getElementById("txType").value = "expense";
-  document.getElementById("txDate").value = new Date().toISOString().slice(0,10);
-  document.getElementById("txDesc").value = "";
-  document.getElementById("txAmount").value = "";
+  document.getElementById("txSaveBtn").textContent    = "Save";
+  document.getElementById("txType").value             = "expense";
+  document.getElementById("txDate").value             = new Date().toISOString().slice(0, 10);
+  document.getElementById("txDesc").value             = "";
+  document.getElementById("txAmount").value           = "";
   populateTxCategoryDropdown("Food");
-  openModal("txModal");
-}
+  window.openModal("txModal");
+};
 
-function openTxModalEdit(id){
-  const txs = loadTx();
-  const t = txs.find(x=>x.id===id);
-  if(!t) return;
-
+window.openTxModalEdit = function (id) {
+  const t = loadTx().find(x => x.id === id);
+  if (!t) return;
   editingTxId = id;
   clearTxError();
   document.getElementById("txModalTitle").textContent = "Edit Transaction";
-  document.getElementById("txSaveBtn").textContent = "Update";
-  document.getElementById("txType").value = t.type;
-  document.getElementById("txDate").value = t.date || new Date().toISOString().slice(0,10);
-  document.getElementById("txDesc").value = t.desc || "";
-  const amt = Number(t.amount || 0);
-  document.getElementById("txAmount").value = Math.abs(amt);
+  document.getElementById("txSaveBtn").textContent    = "Update";
+  document.getElementById("txType").value             = t.type;
+  document.getElementById("txDate").value             = t.date || new Date().toISOString().slice(0, 10);
+  document.getElementById("txDesc").value             = t.desc || "";
+  document.getElementById("txAmount").value           = Math.abs(Number(t.amount || 0));
   populateTxCategoryDropdown(t.category || "Other");
-  openModal("txModal");
-}
+  window.openModal("txModal");
+};
 
-function saveTransaction(){
+window.saveTransaction = function () {
   clearTxError();
-
-  const type = document.getElementById("txType").value;
-  const date = document.getElementById("txDate").value;
-  const desc = (document.getElementById("txDesc").value || "").trim();
+  const type      = document.getElementById("txType").value;
+  const date      = document.getElementById("txDate").value;
+  const desc      = (document.getElementById("txDesc").value || "").trim();
   const amountRaw = Number(document.getElementById("txAmount").value);
 
-  if(!date) return txError("Pick a date.");
-  if(!desc) return txError("Enter a description.");
-  if(!Number.isFinite(amountRaw) || amountRaw <= 0) return txError("Amount must be a positive number.");
+  if (!date)                                          return txError("Pick a date.");
+  if (!desc)                                          return txError("Enter a description.");
+  if (!Number.isFinite(amountRaw) || amountRaw <= 0)  return txError("Amount must be a positive number.");
 
-  let category = document.getElementById("txCategory").value;
-  const newCat = (document.getElementById("txNewCategory").value || "").trim();
-  if(category === "__new__"){
-    if(!newCat) return txError("Enter a new category name.");
+  let category   = document.getElementById("txCategory").value;
+  const newCat   = (document.getElementById("txNewCategory").value || "").trim();
+  if (category === "__new__") {
+    if (!newCat) return txError("Enter a new category name.");
     category = newCat;
     const cats = loadCategories();
-    if(!cats.some(c=>c.toLowerCase()===newCat.toLowerCase())){
-      cats.push(newCat);
-      saveCategories(cats);
-    }
+    if (!cats.some(c => c.toLowerCase() === newCat.toLowerCase())) { cats.push(newCat); saveCategories(cats); }
   }
 
   const storedAmount = (type === "expense") ? -Math.abs(amountRaw) : Math.abs(amountRaw);
   const txs = loadTx();
 
-  if(editingTxId){
-    const idx = txs.findIndex(x=>x.id===editingTxId);
-    if(idx>=0) txs[idx] = {id: editingTxId, type, date, desc, amount: storedAmount, category};
+  if (editingTxId) {
+    const idx = txs.findIndex(x => x.id === editingTxId);
+    if (idx >= 0) txs[idx] = { id: editingTxId, type, date, desc, amount: storedAmount, category };
   } else {
-    txs.push({id: uid(), type, date, desc, amount: storedAmount, category});
+    txs.push({ id: uid(), type, date, desc, amount: storedAmount, category });
   }
 
   saveTx(txs);
-  closeModal("txModal");
+  window.closeModal("txModal");
   renderAll();
-}
+};
 
-function deleteTransaction(id){
-  const txs = loadTx().filter(t=>t.id!==id);
-  saveTx(txs);
+window.deleteTransaction = function (id) {
+  saveTx(loadTx().filter(t => t.id !== id));
   renderAll();
-}
+};
 
-function txRow(t, showActions){
-  const amt = Number(t.amount || 0);
-  const type = t.type || "expense";
+function txRow(t, showActions) {
+  const amt        = Number(t.amount || 0);
+  const type       = t.type || "expense";
   const displayAmt = Math.abs(amt);
-
-  const el = document.createElement("div");
+  const el         = document.createElement("div");
   el.className = "tx-item";
   el.innerHTML = `
     <div class="tx-left">
@@ -373,245 +356,198 @@ function txRow(t, showActions){
       </div>
     </div>
     <div class="tx-right">
-      <div class="tx-amt ${type}">${type==="expense" ? "-" : "+"}${money(displayAmt)}</div>
+      <div class="tx-amt ${type}">${type === "expense" ? "-" : "+"}${money(displayAmt)}</div>
       ${showActions ? `
         <button class="icon-btn" onclick="openTxModalEdit('${t.id}')">Edit</button>
         <button class="icon-btn danger" onclick="deleteTransaction('${t.id}')">Delete</button>
-      ` : ``}
-    </div>
-  `;
+      ` : ""}
+    </div>`;
   return el;
 }
 
-function filteredTransactions(txs){
-  if(!searchTerm) return txs;
-  return txs.filter(t=>{
-    const hay = `${t.desc||""} ${t.category||""} ${t.type||""}`.toLowerCase();
-    return hay.includes(searchTerm);
-  });
+function filteredTransactions(txs) {
+  if (!searchTerm) return txs;
+  return txs.filter(t => `${t.desc||""} ${t.category||""} ${t.type||""}`.toLowerCase().includes(searchTerm));
 }
 
-// ===== Budget UI =====
-function clearBudError(){
-  const b=document.getElementById("budError");
-  if(b){b.style.display="none"; b.textContent="";}
-}
-function budError(msg){
-  const b=document.getElementById("budError");
-  if(b){b.style.display="block"; b.textContent=msg;}
-}
+/* =========================================
+   6. BUDGET UI
+   ========================================= */
+function clearBudError() { const b = document.getElementById("budError"); if (b) { b.style.display = "none"; b.textContent = ""; } }
+function   budError(msg) { const b = document.getElementById("budError"); if (b) { b.style.display = "block"; b.textContent = msg; } }
 
-function openBudgetModalAdd(){
+window.openBudgetModalAdd = function () {
   editingBudId = null;
   clearBudError();
   document.getElementById("budgetModalTitle").textContent = "New Budget";
-  document.getElementById("budSaveBtn").textContent = "Save";
-  document.getElementById("budCategory").value = "";
-  document.getElementById("budLimit").value = "";
-  openModal("budgetModal");
+  document.getElementById("budSaveBtn").textContent       = "Save";
+  document.getElementById("budCategory").value            = "";
+  document.getElementById("budLimit").value               = "";
+  window.openModal("budgetModal");
   document.getElementById("budCategory").focus();
-}
+};
 
-function openBudgetModalEdit(id){
-  const buds = loadBudgets();
-  const b = buds.find(x=>x.id===id);
-  if(!b) return;
-
+window.openBudgetModalEdit = function (id) {
+  const b = loadBudgets().find(x => x.id === id);
+  if (!b) return;
   editingBudId = id;
   clearBudError();
   document.getElementById("budgetModalTitle").textContent = "Edit Budget";
-  document.getElementById("budSaveBtn").textContent = "Update";
-  document.getElementById("budCategory").value = b.category;
-  document.getElementById("budLimit").value = b.limit;
-  openModal("budgetModal");
+  document.getElementById("budSaveBtn").textContent       = "Update";
+  document.getElementById("budCategory").value            = b.category;
+  document.getElementById("budLimit").value               = b.limit;
+  window.openModal("budgetModal");
   document.getElementById("budCategory").focus();
-}
+};
 
-function saveBudget(){
+window.saveBudget = function () {
   clearBudError();
   const cat = (document.getElementById("budCategory").value || "").trim();
   const lim = Number(document.getElementById("budLimit").value);
 
-  if(!cat) return budError("Enter a category.");
-  if(!Number.isFinite(lim) || lim < 0) return budError("Limit must be 0 or more.");
+  if (!cat)                                       return budError("Enter a category.");
+  if (!Number.isFinite(lim) || lim < 0)           return budError("Limit must be 0 or more.");
 
   const buds = loadBudgets();
-  const dup = buds.find(x => x.category.toLowerCase() === cat.toLowerCase() && x.id !== editingBudId);
-  if(dup) return budError("That category already exists. Edit it instead.");
+  const dup  = buds.find(x => x.category.toLowerCase() === cat.toLowerCase() && x.id !== editingBudId);
+  if (dup) return budError("That category already exists. Edit it instead.");
 
-  if(editingBudId){
-    const idx = buds.findIndex(x=>x.id===editingBudId);
-    if(idx>=0) buds[idx] = {id: editingBudId, category: cat, limit: lim};
+  if (editingBudId) {
+    const idx = buds.findIndex(x => x.id === editingBudId);
+    if (idx >= 0) buds[idx] = { id: editingBudId, category: cat, limit: lim };
   } else {
-    buds.push({id: uid(), category: cat, limit: lim});
+    buds.push({ id: uid(), category: cat, limit: lim });
   }
-
   saveBudgets(buds);
+
   const cats = loadCategories();
-  if(!cats.some(c=>c.toLowerCase()===cat.toLowerCase())){
-    cats.push(cat);
-    saveCategories(cats);
-  }
+  if (!cats.some(c => c.toLowerCase() === cat.toLowerCase())) { cats.push(cat); saveCategories(cats); }
 
-  closeModal("budgetModal");
+  window.closeModal("budgetModal");
   renderAll();
-}
+};
 
-function clearAllBudgets() {
+window.clearAllBudgets = function () {
   if (confirm("Are you sure you want to clear ALL your planned budgets? This cannot be undone.")) {
     saveBudgets([]);
     renderAll();
   }
-}
+};
 
-function deleteBudget(id){
-  const buds = loadBudgets().filter(b=>b.id!==id);
-  saveBudgets(buds);
+window.deleteBudget = function (id) {
+  saveBudgets(loadBudgets().filter(b => b.id !== id));
   renderAll();
-}
+};
 
-function budgetStatus(spent, limit){
-  if(limit <= 0) return {label:"On Track", cls:"good"};
+function budgetStatus(spent, limit) {
+  if (limit <= 0)         return { label: "On Track",    cls: "good" };
   const pct = spent / limit;
-  if(pct >= 1) return {label:"Over Budget", cls:"bad"};
-  if(pct >= 0.9) return {label:"Almost There", cls:"warn"};
-  return {label:"On Track", cls:"good"};
+  if (pct >= 1)           return { label: "Over Budget", cls: "bad"  };
+  if (pct >= 0.9)         return { label: "Almost There",cls: "warn" };
+  return                         { label: "On Track",    cls: "good" };
 }
 
-// ===== Rendering =====
-function renderSummary(){
-  const txs = loadTx();
-  const {income, expenses, savings, balance} = computeTotals(txs);
-  if(document.getElementById("sum-income")) document.getElementById("sum-income").textContent = money(income);
-  if(document.getElementById("sum-expenses")) document.getElementById("sum-expenses").textContent = money(expenses);
-  if(document.getElementById("sum-savings")) document.getElementById("sum-savings").textContent = money(savings);
-  if(document.getElementById("sum-balance")) document.getElementById("sum-balance").textContent = money(balance);
+/* =========================================
+   7. RENDERING
+   ========================================= */
+function renderSummary() {
+  const { income, expenses, savings, balance } = computeTotals(loadTx());
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = money(val); };
+  set("sum-income", income); set("sum-expenses", expenses);
+  set("sum-savings", savings); set("sum-balance", balance);
 }
 
-function renderChart(){
+function renderChart() {
   const wrap = document.getElementById("chartWrap");
-  if(!wrap) return;
-
-  const txs = loadTx();
-  const map = expenseByCategory(txs);
-  const rows = Array.from(map.entries()).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  if (!wrap) return;
+  const map  = expenseByCategory(loadTx());
+  const rows = Array.from(map.entries()).sort((a, b) => b[1] - a[1]).slice(0, 5);
   wrap.innerHTML = "";
-
-  if(rows.length === 0){
+  if (rows.length === 0) {
     wrap.innerHTML = `<div class="chart-empty">No expenses yet. Add an&nbsp;<b>Expense</b>&nbsp;to see the chart.</div>`;
     return;
   }
-
-  const colors = ['#00c853', '#8b5cf6', '#f59e0b', '#ef4444', '#3b82f6'];
-  const total = rows.reduce((sum, row) => sum + row[1], 0);
-
-  let gradientStops = [];
-  let currentPct = 0;
-  let legendHtml = "";
-
-  for(let i=0; i<rows.length; i++){
+  const colors = ["#00c853", "#8b5cf6", "#f59e0b", "#ef4444", "#3b82f6"];
+  const total  = rows.reduce((s, r) => s + r[1], 0);
+  let stops = [], cur = 0, legendHtml = "";
+  for (let i = 0; i < rows.length; i++) {
     const [cat, val] = rows[i];
     const pct = (val / total) * 100;
-    const color = colors[i % colors.length];
-
-    gradientStops.push(`${color} ${currentPct}% ${currentPct + pct}%`);
-    currentPct += pct;
-
+    stops.push(`${colors[i]} ${cur}% ${cur + pct}%`);
+    cur += pct;
     legendHtml += `
       <div class="legend-item">
         <div class="legend-left">
-          <div class="legend-color" style="background:${color}"></div>
+          <div class="legend-color" style="background:${colors[i]}"></div>
           <div class="legend-label" title="${escapeHtml(cat)}">${escapeHtml(cat)}</div>
         </div>
         <div class="legend-val">${money(val)}</div>
-      </div>
-    `;
+      </div>`;
   }
-  const conicGradient = `conic-gradient(${gradientStops.join(', ')})`;
   wrap.innerHTML = `
     <div class="pie-container">
-      <div class="pie-chart" style="background: ${conicGradient}"></div>
+      <div class="pie-chart" style="background:conic-gradient(${stops.join(",")})"></div>
       <div class="pie-legend">${legendHtml}</div>
-    </div>
-  `;
+    </div>`;
 }
 
-function renderRecent(){
+function renderRecent() {
   const wrap = document.getElementById("recentList");
-  if(!wrap) return;
-
-  const txs = loadTx().slice().sort((a,b)=>(b.date||"").localeCompare(a.date||""));
-  const recent = txs.slice(0,6);
+  if (!wrap) return;
+  const txs = loadTx().slice().sort((a, b) => (b.date || "").localeCompare(a.date || "")).slice(0, 6);
   wrap.innerHTML = "";
-  if(recent.length === 0){
-    wrap.innerHTML = `<div class="chart-empty">Nothing yet. Click&nbsp;<b> + Add Transaction</b>&nbsp;to start.</div>`;
-    return;
-  }
-  for(const t of recent) wrap.appendChild(txRow(t,false));
+  if (!txs.length) { wrap.innerHTML = `<div class="chart-empty">Nothing yet. Click&nbsp;<b>+ Add Transaction</b>&nbsp;to start.</div>`; return; }
+  for (const t of txs) wrap.appendChild(txRow(t, false));
 }
 
-function renderAllTransactions(){
+function renderAllTransactions() {
   const wrap = document.getElementById("allList");
-  if(!wrap) return;
-
-  const txs = loadTx().slice().sort((a,b)=>(b.date||"").localeCompare(a.date||""));
-  const list = filteredTransactions(txs);
+  if (!wrap) return;
+  const txs  = filteredTransactions(loadTx().slice().sort((a, b) => (b.date || "").localeCompare(a.date || "")));
   wrap.innerHTML = "";
-  if(list.length === 0){
-    wrap.innerHTML = `<div class="chart-empty">No matching transactions.</div>`;
-    return;
-  }
-  for(const t of list) wrap.appendChild(txRow(t,true));
+  if (!txs.length) { wrap.innerHTML = `<div class="chart-empty">No matching transactions.</div>`; return; }
+  for (const t of txs) wrap.appendChild(txRow(t, true));
 }
 
-function renderBudgets(){
+function renderBudgets() {
   const grid = document.getElementById("budgetGrid");
-  if(!grid) return;
-
-  const txs = loadTx();
-  const buds = loadBudgets();
-  const spentMap = expenseByCategory(txs);
-
+  if (!grid) return;
+  const txs        = loadTx();
+  const buds       = loadBudgets();
+  const spentMap   = expenseByCategory(txs);
   const { income, expenses } = computeTotals(txs);
+  const totalBudget = buds.reduce((s, b) => s + Number(b.limit || 0), 0);
+  const pct         = totalBudget > 0 ? Math.min(100, Math.round((expenses / totalBudget) * 100)) : 0;
 
-  const totalBudget = buds.reduce((s,b)=>s + Number(b.limit||0), 0);
-  const totalSpent = expenses;
-  const remaining = totalBudget - totalSpent;
-  const pct = totalBudget > 0 ? Math.min(100, Math.round((totalSpent/totalBudget)*100)) : 0;
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  set("bud-total",  money(totalBudget));
+  set("bud-spent",  money(expenses));
+  set("bud-remain", money(totalBudget - expenses));
+  set("bud-pct",    pct + "%");
+  const fill = document.getElementById("bud-fill"); if (fill) fill.style.width = pct + "%";
 
-  if(document.getElementById("bud-total")) document.getElementById("bud-total").textContent  = money(totalBudget);
-  if(document.getElementById("bud-spent")) document.getElementById("bud-spent").textContent  = money(totalSpent);
-  if(document.getElementById("bud-remain")) document.getElementById("bud-remain").textContent = money(remaining);
-  if(document.getElementById("bud-fill")) document.getElementById("bud-fill").style.width = pct + "%";
-  if(document.getElementById("bud-pct")) document.getElementById("bud-pct").textContent = pct + "%";
-
-  if(document.getElementById("insight-income")) document.getElementById("insight-income").textContent = money(income);
-  if(document.getElementById("insight-leftover")) {
+  set("insight-income", money(income));
+  const leftoverEl = document.getElementById("insight-leftover");
+  if (leftoverEl) {
     const leftover = income - totalBudget;
-    const leftoverEl = document.getElementById("insight-leftover");
     leftoverEl.textContent = money(leftover);
-
-    if (leftover < 0) leftoverEl.style.color = "var(--bad)";
-    else leftoverEl.style.color = "var(--good)";
+    leftoverEl.style.color = leftover < 0 ? "var(--bad)" : "var(--good)";
   }
 
   grid.innerHTML = "";
-  if(buds.length === 0){
-    grid.innerHTML = `<div class="chart-empty">No budgets. Click <b>+ New Budget</b> to add one.</div>`;
-    return;
-  }
+  if (!buds.length) { grid.innerHTML = `<div class="chart-empty">No budgets. Click <b>+ New Budget</b> to add one.</div>`; return; }
 
-  for(const b of buds){
-    const limit = Number(b.limit||0);
-    const spent = spentMap.get(b.category) || 0;
-    const ratio = (limit > 0) ? Math.min(1, spent/limit) : 0;
-    const width = Math.round(ratio * 100);
+  for (const b of buds) {
+    const limit  = Number(b.limit || 0);
+    const spent  = spentMap.get(b.category) || 0;
+    const width  = limit > 0 ? Math.round(Math.min(1, spent / limit) * 100) : 0;
     const status = budgetStatus(spent, limit);
-
-    let rightText = "";
-    if(limit <= 0) rightText = `<span class="right">$0 left</span>`;
-    else if(spent > limit) rightText = `<span class="right red-text">$${Math.round(spent-limit)} over</span>`;
-    else rightText = `<span class="right">$${Math.round(limit-spent)} left</span>`;
+    const rightText = limit <= 0
+      ? `<span class="right">$0 left</span>`
+      : spent > limit
+        ? `<span class="right red-text">$${Math.round(spent - limit)} over</span>`
+        : `<span class="right">$${Math.round(limit - spent)} left</span>`;
+    const barColor = status.cls === "bad" ? "var(--bad)" : status.cls === "warn" ? "var(--warn)" : "#3b82f6";
 
     const card = document.createElement("div");
     card.className = "budget-card";
@@ -623,19 +559,13 @@ function renderBudgets(){
       <span class="badge ${status.cls}">${status.label}</span>
       <h3 class="category">${escapeHtml(b.category)}</h3>
       <p class="money">${money(spent)} <span class="gray">of ${money(limit)}</span></p>
-      <div class="bar-container">
-        <div class="bar-fill2" style="width:${width}%; background:${status.cls==='bad' ? 'var(--bad)' : (status.cls==='warn' ? 'var(--warn)' : '#3b82f6')};"></div>
-      </div>
-      <p class="details">
-        ${limit>0 ? Math.round((spent/limit)*100) : 0}% used
-        ${rightText}
-      </p>
-    `;
+      <div class="bar-container"><div class="bar-fill2" style="width:${width}%;background:${barColor}"></div></div>
+      <p class="details">${limit > 0 ? Math.round((spent / limit) * 100) : 0}% used ${rightText}</p>`;
     grid.appendChild(card);
   }
 }
 
-function renderAll(){
+function renderAll() {
   renderSummary();
   renderChart();
   renderRecent();
@@ -643,10 +573,297 @@ function renderAll(){
   renderBudgets();
 }
 
-// ===== Init =====
-(function init(){
-  requireAuth();
+/* =========================================
+   8. AI CHATBOT — SPARK (LOCAL MODEL + Transformers.js, rivescript.js for routing, langchain.js for prompt management,
+   fuse.js for semantic search — ALL RUNNING LOCALLY IN THE BROWSER.NO API CALLS. , currency.js for money formatting)
+   ========================================= */
+let rs = null;
+let aiPipeline = null;
+let LangchainPromptTemplate = null;
+let isAiReady = false;
+
+function initRiveScript() {
+  if (typeof window.RiveScript === "undefined") return;
+  rs = new window.RiveScript();
+  rs.stream(`
+    + hello
+    - Hi there! I'm Spark ✨, your financial assistant. How can I help you today?
+    + hi
+    @ hello
+    + hey
+    @ hello
+    + thank you
+    - You're welcome! Keep up the great financial work!
+    + thanks
+    @ thank you
+    + *
+    - CALL_LLM
+  `);
+  rs.sortReplies();
+}
+
+window.toggleChat = function () {
+  const win = document.getElementById("spark-chat-window");
+  if (!win) return;
+  win.classList.toggle("hidden");
+  
+  if (!aiPipeline && !win.classList.contains("hidden")) {
+    initializeSparkAI();
+  }
+};
+
+window.handleSparkSend = async function () {
+  const inputEl = document.getElementById("spark-input");
+  const message = inputEl.value.trim();
+  if (!message) return;
+
+  appendMessage("user", message);
+  inputEl.value = "";
+
+  let reply = "CALL_LLM";
+  if (rs) {
+    try { 
+      reply = await rs.reply("local-user", message.toLowerCase()); 
+    } catch { 
+      reply = "CALL_LLM"; 
+    }
+  }
+
+  if (reply === "CALL_LLM") {
+    const typingId = appendMessage("bot", "Spark is thinking... (Running local AI)");
+    
+    try {
+      reply = await generateAIResponse(message);
+    } catch (err) {
+      console.error("Chat Error:", err);
+      reply = "Sorry, I hit a snag trying to process that. Could you try again?";
+    }
+
+    const el = document.getElementById(typingId);
+    if (el) el.innerText = reply;
+  } else {
+    appendMessage("bot", reply);
+  }
+  scrollToBottom();
+};
+/*Initiate local AI Model*/
+async function initializeSparkAI() {
+  const inputEl = document.getElementById("spark-input");
+  const sendBtn = document.getElementById("spark-send-btn");
+  
+  const loadingId = appendMessage("bot", "Waking up my AI brain... (Downloading local model. This may take a minute!)");
+  
+  try {
+    const langchain = await import('https://esm.sh/@langchain/core@0.1.58/prompts?bundle');
+    LangchainPromptTemplate = langchain.PromptTemplate;
+
+    const transformers = await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers');
+    transformers.env.allowLocalModels = false;
+    
+    aiPipeline = await transformers.pipeline('text-generation', 'HuggingFaceTB/SmolLM-135M-Instruct');
+    
+    document.getElementById(loadingId).innerText = "I'm online and ready! Ask me for advice or search your transactions.";
+    isAiReady = true;
+    
+    if (inputEl) inputEl.disabled = false;
+    if (sendBtn) sendBtn.disabled = false;
+    if (inputEl) inputEl.focus();
+  } catch (error) {
+    console.error("AI Load Error:", error);
+    document.getElementById(loadingId).innerText = "Oops! I had trouble waking up. Please check your internet connection.";
+  }
+}
+
+function toMoney(val) {
+  return window.currency ? window.currency(val).format() : `$${Number(val).toFixed(2)}`;
+}
+
+/*Ai generates responses based on user input, using the same data and calculations as the dashboard for accurate answers. 
+It also includes a smart interceptor to route common questions to pre-built answers for instant responses, while more complex queries trigger the local AI model for analysis. */
+
+async function generateAIResponse(userMessage) {
+  if (!isAiReady) return "I'm still waking up! Give me just a second.";
+
+  const txs = JSON.parse(localStorage.getItem("ff_transactions_v1")) || [];
+  const buds = JSON.parse(localStorage.getItem("ff_budgets_v1")) || [];
+  
+  // Uses the exact math the dashboard uses
+  const totals = computeTotals(txs);
+  const spentMap = expenseByCategory(txs); 
+  
+  // SMART INTERCEPTOR
+  const lowerMsg = userMessage.toLowerCase();
+
+  // Takes filler words to isolate the actual search term
+  const stopWords = /\b(what|whats|what's|is|are|am|my|the|a|an|transaction|transactions|budget|budgets|overbudget|amount|cost|for|how|much|did|i|spend|on|find|search|show|me|tell|about)\b/gi;
+  const searchWords = lowerMsg.replace(stopWords, "").replace(/[^a-z0-9\s]/gi, "").trim();
+
+  // Route A: Savings
+  if (lowerMsg.includes("saving") && !lowerMsg.includes("increase") && !lowerMsg.includes("would i")) {
+    return `Dashboard: Your total savings are ${toMoney(totals.savings)}.`;
+  }
+
+  // Route B: Dashboard Questions
+  if (lowerMsg.includes("balance") || (lowerMsg.includes("total") && !lowerMsg.includes("budget"))) {
+    return `Dashboard: Your total balance is ${toMoney(totals.balance)}. (Income: ${toMoney(totals.income)}, Expenses: ${toMoney(totals.expenses)}, Savings: ${toMoney(totals.savings)})`;
+  }
+  if (lowerMsg.includes("income")) {
+    return `Dashboard: Your total income is ${toMoney(totals.income)}.`;
+  }
+  if (lowerMsg.includes("expense") || lowerMsg.includes("spent") || lowerMsg.includes("spend")) {
+    if (searchWords.length === 0 && !lowerMsg.includes("too much")) { 
+      return `Dashboard: Your total expenses are ${toMoney(totals.expenses)}.`;
+    }
+  }
+
+  // Route C: Financial Advice & Suggestions
+  if (lowerMsg.includes("too much") || lowerMsg.includes("cut down") || lowerMsg.includes("would i save") || lowerMsg.includes("invest") || lowerMsg.includes("advice") || lowerMsg.includes("suggestion") || lowerMsg.includes("help me save")) {
+     let highestCat = "nothing";
+     let highestAmt = 0;
+     
+     // Loop through the spentMap to find the biggest spender
+     for (const [cat, amt] of spentMap.entries()) {
+       if (amt > highestAmt) {
+         highestAmt = amt;
+         highestCat = cat;
+       }
+     }
+
+     if (highestAmt > 0) {
+       const cutAmount = highestAmt * 0.20; // e.g Suggest a 20% cut
+       return `Insight: Your highest expense right now is ${highestCat} (${toMoney(highestAmt)}). If you cut down your ${highestCat} spending by just 20%, you could save/invest an extra ${toMoney(cutAmount)} this month!`;
+     } else {
+       return "Insight: You don't have any expenses logged yet! Once you add some transactions, I can analyze where you can save money.";
+     }
+  }
+
+  // Route D: Budget / Overbudget Questions
+  if (lowerMsg.includes("budget") || lowerMsg.includes("allowance") || lowerMsg.includes("overbudget") || lowerMsg.includes("over budget")) {
+     if (buds.length > 0) {
+       
+       let targetBud = null;
+
+       if (searchWords.length > 0 && window.Fuse) {
+         const fuseBud = new window.Fuse(buds, { keys: ['category'], threshold: 0.4 });
+         const budResults = fuseBud.search(searchWords).map(res => res.item);
+         if (budResults.length > 0) {
+           targetBud = budResults[0];
+         }
+       }
+       
+       if (targetBud) {
+         const limit = Number(targetBud.limit);
+         const spent = spentMap.get(targetBud.category) || 0;
+         const left = limit - spent;
+
+         if (lowerMsg.includes("overbudget") || lowerMsg.includes("over budget")) {
+           if (left < 0) {
+             return `Yes, you are overbudget for ${targetBud.category}. You are over your limit by ${toMoney(Math.abs(left))}.`;
+           } else if (left === 0) {
+             return `You have reached your exact limit for ${targetBud.category}. You have $0 left to spend in this category.`;
+           } else {
+             return `No, you are not overbudget for ${targetBud.category}. You still have ${toMoney(left)} left to spend.`;
+           }
+         } 
+         else {
+           return `Budget: Your limit for ${targetBud.category} is ${toMoney(limit)}. You have spent ${toMoney(spent)}, leaving you with ${toMoney(left)} left.`;
+         }
+       } 
+       else {
+         const totalBud = buds.reduce((s,b) => s + Number(b.limit), 0);
+         return `Budget: Your total planned budget across all categories is ${toMoney(totalBud)}.`;
+       }
+     } else {
+       return "Budget: You don't have any budgets set up yet.";
+     }
+  }
+
+  // Route E: Transaction Searches
+  if (window.Fuse && txs.length > 0) {
+    if (searchWords.length > 1) { 
+      const fuseTx = new window.Fuse(txs, { keys: ['desc', 'category'], threshold: 0.4 });
+      const txResults = fuseTx.search(searchWords).map(res => res.item);
+      
+      if (txResults.length > 0) {
+        const t = txResults[0]; 
+        const sign = t.type === "expense" ? "-" : "+";
+        return `${t.desc}: ${t.date} | Amount: ${sign}${toMoney(t.amount)}`;
+      }
+    }
+  }
+
+  // Fallback to Local AI for general chat
+  try {
+    const promptTemplate = LangchainPromptTemplate.fromTemplate(`
+<|im_start|>system
+You are Spark, a helpful financial assistant. Answer briefly and conversationally. Do not write formulas, code, or math equations.<|im_end|>
+<|im_start|>user
+{question}<|im_end|>
+<|im_start|>assistant
+`);
+
+    const formattedPrompt = await promptTemplate.format({
+      question: userMessage
+    });
+
+    const output = await aiPipeline(formattedPrompt, {
+      max_new_tokens: 60,
+      do_sample: false,
+      return_full_text: false 
+    });
+
+    let replyText = output[0].generated_text;
+
+    if (replyText.includes("assistant\n")) {
+      const parts = replyText.split("assistant\n");
+      replyText = parts[parts.length - 1];
+    }
+
+    return replyText.trim() || "I couldn't find a matching transaction. Try asking about a specific item like 'food' or 'groceries'!";
+
+  } catch (error) {
+    console.error("The REAL Generation Error:", error); 
+    return "I couldn't find a matching transaction or budget. Try searching for a specific expense!";
+  }
+}
+
+function appendMessage(sender, text) {
+  const chatBody = document.getElementById("spark-chat-body");
+  if (!chatBody) return null;
+  const div = document.createElement("div");
+  div.className = "chat-msg " + sender;
+  div.id = "msg-" + Date.now() + "-" + Math.random().toString(16).slice(2);
+  div.innerText = text;
+  
+  if (sender === "user") {
+    div.style.cssText =
+      "background:var(--green);color:#fff;align-self:flex-end;" +
+      "border-bottom-left-radius:12px;border-bottom-right-radius:4px;margin-left:auto;";
+  }
+  
+  chatBody.appendChild(div);
+  scrollToBottom();
+  return div.id;
+}
+
+function scrollToBottom() {
+  const cb = document.getElementById("spark-chat-body");
+  if (cb) cb.scrollTop = cb.scrollHeight;
+}
+
+/* =========================================
+   9. INITIALIZATION
+   ========================================= */
+document.addEventListener("DOMContentLoaded", () => {
+  const sparkInput = document.getElementById("spark-input");
+  if (sparkInput) {
+    sparkInput.addEventListener("keypress", function (e) {
+      if (e.key === "Enter") window.handleSparkSend();
+    });
+  }
+
   loadBudgets();
   loadCategories();
   renderAll();
-})();
+  initRiveScript();
+});
