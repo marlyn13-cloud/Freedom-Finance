@@ -20,5 +20,6 @@ User: "Am I overbudget for food?"
 Transaction Search: * Uses fuzzy semantic search to find specific logged transactions and returns the date, description, and exact amount.*
 
 ## Sample Use Case of AI Chatbot
+- Spark can instantly parse natural language to check specific budgets. Also provides insights along with financial suggestions.
 <img width="314" height="521" alt="image" src="https://github.com/user-attachments/assets/0e6d62a1-ea07-424a-8cf0-427536af2c13" />
 
