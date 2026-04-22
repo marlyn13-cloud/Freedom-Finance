@@ -10,7 +10,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/currency.js/2.0.4/currency.min.js"></script>
 </head>
 <body>
-  <div class="navbar">
+  <div class="navbar no-print">
     <div class="nav-left">
       <div class="logo">Freedom Finance</div>
       <div class="nav-links">
@@ -28,14 +28,125 @@
   </div>
 
   <section class="page active">
-    <div class="card card-pad">
-      <h2 class="m-0">Reports</h2>
-      <p class="text-muted-mt8">Coming soon: exports, monthly summaries, and charts.</p>
+    <div class="budget-header">
+      <div>
+        <h1 class="budget-title">Reports Dashboard</h1>
+        <p class="text-muted-mt8">
+          Pull reports by date range, review monthly summaries, and spot areas to cut spending.
+        </p>
+      </div>
+    </div>
+
+    <div class="card card-pad reports-filter-card no-print">
+      <div class="reports-filter-row">
+        <div class="reports-filter-group">
+          <label for="reportStartDate">Start Date</label>
+          <input type="date" id="reportStartDate" />
+        </div>
+
+        <div class="reports-filter-group">
+          <label for="reportEndDate">End Date</label>
+          <input type="date" id="reportEndDate" />
+        </div>
+
+        <div class="reports-filter-actions">
+          <button class="btn secondary" onclick="setReportRange('thisMonth')">This Month</button>
+          <button class="btn secondary" onclick="setReportRange('last30')">Last 30 Days</button>
+          <button class="btn secondary" onclick="setReportRange('thisYear')">This Year</button>
+          <button class="btn primary" onclick="renderReports()">Run Report</button>
+          <button class="btn secondary" onclick="exportReportPDF()">Export PDF</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="reportPrintArea">
+      <div class="report-print-header">
+        <h1>Freedom Finance Report</h1>
+        <p id="reportPrintRange"></p>
+      </div>
+
+      <div class="reports-summary-grid">
+        <div class="card summary-card">
+          <div class="summary-title">Income</div>
+          <div class="summary-value" id="rep-income">$0.00</div>
+        </div>
+
+        <div class="card summary-card">
+          <div class="summary-title">Expenses</div>
+          <div class="summary-value" id="rep-expenses">$0.00</div>
+        </div>
+
+        <div class="card summary-card">
+          <div class="summary-title">Savings / Investments</div>
+          <div class="summary-value" id="rep-saving-invest">$0.00</div>
+        </div>
+
+        <div class="card summary-card">
+          <div class="summary-title">Net Change</div>
+          <div class="summary-value" id="rep-net">$0.00</div>
+        </div>
+      </div>
+
+      <div class="reports-main-grid">
+        <div class="reports-left-col">
+          <div class="card card-pad">
+            <div class="row-head">
+              <div>
+                <h3>Monthly Summary</h3>
+                <div class="text-muted-sm">Income, expenses, and net by month</div>
+              </div>
+            </div>
+            <div id="monthlySummaryGrid" class="monthly-summary-grid"></div>
+          </div>
+
+          <div class="card card-pad">
+            <div class="row-head">
+              <div>
+                <h3>Spending by Category</h3>
+                <div class="text-muted-sm">Largest expense categories in selected range</div>
+              </div>
+            </div>
+            <div id="reportCategoryBars" class="report-bars-wrap"></div>
+          </div>
+
+          <div class="card card-pad">
+            <div class="row-head">
+              <div>
+                <h3>Transactions in Range</h3>
+                <div class="text-muted-sm">Detailed report for the selected dates</div>
+              </div>
+            </div>
+            <div id="reportTxTableWrap" class="report-table-wrap"></div>
+          </div>
+        </div>
+
+        <div class="reports-right-col">
+          <div class="card card-pad">
+            <div class="row-head">
+              <div>
+                <h3>Budget Insights</h3>
+                <div class="text-muted-sm">Suggestions based on budget usage</div>
+              </div>
+            </div>
+            <div id="reportInsights" class="report-insights-list"></div>
+          </div>
+
+          <div class="card card-pad">
+            <div class="row-head">
+              <div>
+                <h3>Top Spending Categories</h3>
+                <div class="text-muted-sm">Quick snapshot of where money is going</div>
+              </div>
+            </div>
+            <div id="reportTopCategories" class="report-top-cats"></div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
   <!-- Add / Edit Transaction Modal -->
-  <div class="modal" id="txModal" onclick="backdropClose(event,'txModal')">
+  <div class="modal no-print" id="txModal" onclick="backdropClose(event,'txModal')">
     <div class="modal-content" role="dialog" aria-modal="true">
       <div class="modal-top">
         <h3 id="txModalTitle">Add Transaction</h3>
@@ -78,8 +189,8 @@
   </div>
 
   <!-- Spark AI -->
-  <button id="spark-fab" onclick="toggleChat()">✨</button>
-  <div id="spark-chat-window" class="hidden">
+  <button id="spark-fab" class="no-print" onclick="toggleChat()">✨</button>
+  <div id="spark-chat-window" class="hidden no-print">
     <div class="chat-header">
       <span>✨ Spark AI</span>
       <button class="close-chat" onclick="toggleChat()">✕</button>
