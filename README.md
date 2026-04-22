@@ -29,7 +29,7 @@ The Freedom Finance Dashboard provides a simple and efficient interface for mana
 
 ### Reports Tabs
 - Download Report summary
-- 
+- Provides overall insights into the budget.
 
 ## AI CHATBOT: Libraries
 
