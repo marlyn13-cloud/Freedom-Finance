@@ -9,15 +9,24 @@
 
 <body>
   <section id="authPage" class="auth-page">
+    
+    <!-- LEFT PREVIEW -->
     <div class="auth-preview">
       <div class="auth-preview-inner">
+
         <div class="auth-brand">Freedom Finance</div>
-        <h1 class="auth-heading">Take control of your money with confidence.</h1>
+
+        <h1 class="auth-heading">
+          Take control of your money with confidence.
+        </h1>
+
         <p class="auth-subheading">
           Track transactions, manage budgets, and visualize your spending in one place.
         </p>
 
+        <!-- PREVIEW UI -->
         <div class="preview-shell">
+
           <div class="preview-topbar">
             <div class="preview-logo">Freedom Finance</div>
             <div class="preview-top-actions">
@@ -28,26 +37,34 @@
           </div>
 
           <div class="preview-grid">
+
+            <!-- LEFT SUMMARY -->
             <div class="preview-summary-col">
               <div class="preview-card">
                 <div class="preview-title">Total Balance</div>
                 <div class="preview-value">$4,820.00</div>
               </div>
+
               <div class="preview-card">
                 <div class="preview-title">Income</div>
                 <div class="preview-value">$5,600.00</div>
               </div>
+
               <div class="preview-card">
                 <div class="preview-title">Expenses</div>
                 <div class="preview-value">$780.00</div>
               </div>
+
               <div class="preview-card">
                 <div class="preview-title">Savings</div>
                 <div class="preview-value">$350.00</div>
               </div>
             </div>
 
+            <!-- RIGHT SIDE -->
             <div class="preview-main-col">
+
+              <!-- PIE -->
               <div class="preview-card preview-big">
                 <div class="preview-row-head">
                   <div>
@@ -105,6 +122,7 @@
                 </div>
               </div>
 
+              <!-- RECENT TX -->
               <div class="preview-card preview-big">
                 <div class="preview-row-head">
                   <h3>Recent Transactions</h3>
@@ -136,77 +154,82 @@
                   </div>
                 </div>
               </div>
+
             </div>
           </div>
         </div>
+
       </div>
     </div>
 
+    <!-- RIGHT AUTH PANEL -->
     <div class="auth-panel">
       <div class="auth-card">
-        <img src="logo.jpg" alt="Freedom Finance" class="card-brand-logo" />
 
-        <!-- LOGIN VIEW -->
+        <img src="logo.jpg" class="card-brand-logo" />
+
+        <!-- LOGIN -->
         <div id="view-login" class="auth-view active">
           <h2 class="auth-card-title">Welcome Back</h2>
-          <p class="auth-card-subtitle">Sign in to continue to your account</p>
+          <p class="auth-card-subtitle">Sign in to continue</p>
 
           <div class="form-group">
-            <label for="loginIdentifier">Username or Email</label>
-            <input id="loginIdentifier" type="text" placeholder="Enter username or email" />
+            <label>Username or Email</label>
+            <input id="loginIdentifier" type="text" />
           </div>
 
           <div class="form-group">
-            <label for="loginPassword">Password</label>
-            <input id="loginPassword" type="password" placeholder="Enter password" />
+            <label>Password</label>
+            <input id="loginPassword" type="password" />
           </div>
 
           <div class="error" id="loginError"></div>
 
-          <button class="auth-btn" type="button" onclick="handleLogin()">Sign In</button>
+          <button class="auth-btn" onclick="handleLogin()">Sign In</button>
 
           <div class="switch-text">
             Don’t have an account?
-            <button class="text-link inline" type="button" onclick="showAuthView('signup')">Create one</button>
+            <button class="text-link inline" onclick="showAuthView('signup')">Create one</button>
           </div>
         </div>
 
-        <!-- SIGNUP VIEW -->
+        <!-- SIGNUP -->
         <div id="view-signup" class="auth-view">
           <h2 class="auth-card-title">Create Account</h2>
-          <p class="auth-card-subtitle">Set up your Freedom Finance account</p>
 
           <div class="form-group">
-            <label for="signupUsername">Username</label>
-            <input id="signupUsername" type="text" placeholder="Choose a username" />
+            <label>Username</label>
+            <input id="signupUsername" />
           </div>
 
           <div class="form-group">
-            <label for="signupEmail">Email</label>
-            <input id="signupEmail" type="email" placeholder="Enter your email" />
+            <label>Email</label>
+            <input id="signupEmail" type="email" />
           </div>
 
           <div class="form-group">
-            <label for="signupPassword">Password</label>
-            <input id="signupPassword" type="password" placeholder="Create a password" />
+            <label>Password</label>
+            <input id="signupPassword" type="password" />
           </div>
 
           <div class="form-group">
-            <label for="signupConfirmPassword">Confirm Password</label>
-            <input id="signupConfirmPassword" type="password" placeholder="Confirm your password" />
+            <label>Confirm Password</label>
+            <input id="signupConfirmPassword" type="password" />
           </div>
 
           <div class="error" id="signupError"></div>
 
-          <button class="auth-btn" type="button" onclick="handleSignup()">Create Account</button>
+          <button class="auth-btn" onclick="handleSignup()">Create Account</button>
 
           <div class="switch-text">
             Already have an account?
-            <button class="text-link inline" type="button" onclick="showAuthView('login')">Sign in</button>
+            <button class="text-link inline" onclick="showAuthView('login')">Sign in</button>
           </div>
         </div>
+
       </div>
     </div>
+
   </section>
 
   <script src="script.js"></script>
