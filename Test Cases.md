@@ -15,9 +15,9 @@ It utilizes the Category Partition Method to test the entire Freedom Finance app
 ### 1.2 Derived Test Cases
 | Test ID | Combinations Tested | Action / Input | Expected Result |
 | :--- | :--- | :--- | :--- |
-| **TC-01** | P1: Empty, P2: Initial Load | Clear `localStorage` and navigate to the Dashboard. | All cards (Balance, Income, Expenses, Savings) display `$0.00`. Recent transactions list is empty. |
-| **TC-02** | P1: Valid, P2: Initial Load | Load Dashboard with `$2000` Income and `$500` Expenses stored locally. | Total Balance exactly calculates and displays `$1500.00`. Top spending categories correctly the highest expenses. |
-| **TC-DB-03** | P1: Valid, P2: Refresh | Execute a hard refresh (Ctrl+F5) on the Dashboard. | Page reloads; all numbers and UI elements stay exactly as they were. |
+| **TC-01** | P1: Empty, P2: Initial Load | Clear `localStorage` and navigate to the Dashboard. | All cards (Balance, Income, Expenses, Savings) display `$0.00`. The recent transactions list is empty. |
+| **TC-02** | P1: Valid, P2: Initial Load | Load Dashboard with `$2000` Income and `$500` Expenses stored locally. | Total Balance exactly calculates and displays `$1500.00`. Top spending categories correctly reflect the highest expenses. |
+| **TC-03** | P1: Valid, P2: Refresh | Execute a hard refresh (Ctrl+F5) on the Dashboard. | Page reloads; all numbers and UI elements stay exactly as they were. |
 | **TC-04** | P1: Corrupted, P2: Initial | Manually inject `"abc"` into a transaction amount in `localStorage` and load the page. | Application does not crash. System handles the `NaN` error safely (e.g., defaults value to `$0.00`). |
 
 ---
@@ -54,7 +54,7 @@ It utilizes the Category Partition Method to test the entire Freedom Finance app
 | Test ID | Combinations Tested | Action / Input | Expected Result |
 | :--- | :--- | :--- | :--- |
 | **TC-01** | P1: Valid, P2: Under Budget | Set "Groceries" limit to `$400.00`. Total grocery spend is `$100.00`. | Tracker saves and displays `$100.00 / $400.00` with a standard/safe visual status indicator. |
-| **TC-02** | P1: Valid, P2: Over Budget | Set "Entertainment" limit to `$100.00`. Logged entertainment spend is `$150.00`. | Tracker saves and visually warns the user (e.g., turns red) indicating they are over budget. |
+| **TC-02** | P1: Valid, P2: Over Budget | Set "Entertainment" limit to `$100.00`. Logged entertainment spend is `$150.00`. | Tracker saves and visually warns the user (e.g., turns red), indicating they are over budget. |
 | **TC-03** | P1: Zero/Negative, P2: N/A | Attempt to set a budget limit of `$0.00` or `-50.00`. | System rejects the save attempt and prompts for a valid threshold greater than zero. |
 
 ---
@@ -72,7 +72,7 @@ It utilizes the Category Partition Method to test the entire Freedom Finance app
 | :--- | :--- | :--- | :--- |
 | **TC-01** | P1: Comprehensive, P2: View | Navigate to `reports.html` with full user data established. | UI visually renders accurate graphs/summaries matching the Dashboard aggregates. |
 | **TC-02** | P1: Comprehensive, P2: Download | Click the "Download Report" button. | Browser natively downloads a file (e.g., CSV/PDF) perfectly reflecting `localStorage` contents without backend calls. |
-| **TC-03** | P1: Empty, P2: Download | Clear `localStorage`, navigate to Reports, click "Download". | System either disables the download button or downloads an empty template cleanly indicating "No data available". |
+| **TC-03** | P1: Empty, P2: Download | Clear `localStorage`, navigate to Reports, click "Download". | System either disables the download button or downloads an empty template, cleanly indicating "No data available". |
 
 ---
 
